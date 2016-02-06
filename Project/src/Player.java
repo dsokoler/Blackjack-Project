@@ -2,6 +2,7 @@ public class Player {
 	int numChips;
 	Card one;
 	Card two;
+	Card cards[] = new Card[11];	//11 is the maximum number of cards possible in one hand
 	
 	public int getNumChips() { return numChips; }
 	
