@@ -1,5 +1,6 @@
 public class CPU {
 	int numChips;
+	int count;		//Used for CPU that card counts
 	Card one;
 	Card two;
 	Card cards[] = new Card[11];	//11 is the maximum number of cards possible in one hand
@@ -27,7 +28,7 @@ public class CPU {
 		/*Easy*/	{ 1, 1, 1,   0, 0,  0, 0,   0,  0, -1},
 		/*Medium*/	{ 1, 1, 1,   0, 0,  0, 0,   0, -1, -1},
 		/*Hard*/	{ 1, 1, 1,   1, 1,  0, 0,   0, -1, -1},
-	}
+	};
 	
 	//This is typically what a dealer will do
 	//0 is stay
