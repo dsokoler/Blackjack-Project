@@ -1,9 +1,11 @@
+import java.util.ArrayList;
+
 public class CPU {
 	int numChips;
 	int count;		//Used for CPU that card counts
 	Card one;
 	Card two;
-	Card cards[] = new Card[11];	//11 is the maximum number of cards possible in one hand
+	ArrayList<Card> cards;	//11 is the maximum number of cards possible in one hand
 	
 	public double[][] systems = {
 		/*

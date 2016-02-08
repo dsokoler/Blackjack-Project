@@ -7,7 +7,7 @@ public class Engine {
 	//Globals
 	static Scanner in;
 	static ArrayList<Card> deck;
-	static ArrayList<CPU> comps;
+	static ArrayList<Player> comps;
 	static Player hooman;
 	static int drawIndex;
 	static int chipSetting;
@@ -40,8 +40,9 @@ public class Engine {
 					  		 "|{{{{{{{{{| ",
 					  		 "|}}}}}}}}}| ",
 					  		 "|{{{{{{{{{| "};
+	static Boolean shutdown;
 	
-	//Begins a round of play with all hoomans and comps
+	//Begins a round of play with hooman and comps
 	public static void play() {
 		//Print board
 		printBoard();
@@ -52,6 +53,37 @@ public class Engine {
 		//Prompt player for an action
 		playerAction();
 		
+		return;
+	}
+	
+	//Returns the card's value as a string
+	public static String getValue(Card input) {
+		String value = "";
+		if (input.value == 1 || input.value > 10) {
+			switch (input.value) {
+				case 11:
+					value = "J";
+					break;
+					
+				case 12:
+					value = "Q";
+					break;
+					
+				case 13:
+					value = "K";
+					break;
+					
+				case 1:
+					value = "A";
+					break;
+					
+				default:
+					value = " ";
+					break;
+			}
+		}
+		else value = Integer.toString(input.value);
+		return value;
 	}
 	
 	//Will print all the CPU's hands as should be viewed by the player
@@ -59,39 +91,234 @@ public class Engine {
 	public static void printBoard() {
 		//Loop for each CPU
 		for (int i = 0; i < comps.size(); i++) {
-			CPU curr = comps.get(i);
+			Player curr = comps.get(i);
+			int size;
+			if (curr.cards.isEmpty()) size = 0;
+			else size = curr.cards.size();
 			System.out.println("Hand for CPU " + i + ": ");
-			//Loop for each card in hand
-			for (int j = 0; j < comps.size(); j++) {
-				System.out.print(" _________ ");
-			}
-			System.out.println("");
-			//Loop for each card in hand
-			for (int j = 0; j < comps.size(); j++) {
+			//Loop for each line to be printed
+			for (int k = 0; k < 10; k++) {
+				//Loop for each card in hand
+				for (int j = 0; j < size; j++) {
+					switch(k) {
+						//First line
+						case 0:
+							System.out.print(" _________  ");
+							break;
+							
+						//Second line
+						case 1:
+							System.out.print("/         \\ ");
+							break;
+							
+						//Third line
+						case 2:
+							//If one of the first two cards, don't print the value
+							if (j < 2) System.out.print("|{{{{{{{{{| ");
+							else {
+								if (!(getValue(curr.cards.get(j)).equals("10"))) System.out.print("|" + getValue(curr.cards.get(j)) + "        | ");
+								else System.out.print("|" + getValue(curr.cards.get(j)) + "       | ");
+							}
+							break;
+						
+						//Second to last line
+						case 8:
+							//If one of the first two cards, don't print the value
+							if (j < 2) System.out.print("|{{{{{{{{{| ");
+							else {
+								if (!(getValue(curr.cards.get(j)).equals("10"))) System.out.print("|        " + getValue(curr.cards.get(j)) + "| ");
+								else System.out.print("|        " + getValue(curr.cards.get(j)) + "| ");
+							}
+							break;
+							
+						//Last line
+						case 9:
+							System.out.print("\\_________/ ");
+							break;
+						
+						//All lines in between
+						default:
+							//If one of the first two cards, don't print the suit
+							if (j < 2) System.out.print(empty[k-3]);
+							else {
+								switch(curr.cards.get(j).suit) {
+									case 1:
+										System.out.print(club[k-3]);
+										break;
+									
+									case 2:
+										System.out.print(diamond[k-3]);
+										break;
+										
+									case 3:
+										System.out.print(heart[k-3]);
+										break;
+										
+									case 4:
+										System.out.print(spade[k-3]);
+										break;
+										
+									default:
+										System.out.print(empty[k-3]);
+										break;
+								}
+							}
+					}
+				}
+				//Line is finished, move to next line
 				System.out.println("");
 			}
+			//Aesthetic
+			System.out.println("");
 		}
 	}
 	
 	//Prints all the player's cards face up
 	public static void printHand() {
-		
+		int size;
+		System.out.println("Your hand: ");
+		if (hooman.cards.isEmpty()) size = 0;
+		else size = hooman.cards.size();
+		//Loop for each line to be printed
+		for (int k = 0; k < 10; k++) {
+			//Loop for each card in hand
+			for (int j = 0; j < size; j++) {
+				switch(k) {
+					//First line
+					case 0:
+						System.out.print(" _________  ");
+						break;
+						
+					//Second line
+					case 1:
+						System.out.print("/         \\ ");
+						break;
+						
+					//Third line
+					case 2:
+						if (!(getValue(hooman.cards.get(j)).equals("10"))) System.out.print("|" + getValue(hooman.cards.get(j)) + "        | ");
+						else System.out.print("|" + getValue(hooman.cards.get(j)) + "       | ");
+						break;
+					
+					//Second to last line
+					case 8:
+						if (!(getValue(hooman.cards.get(j)).equals("10"))) System.out.print("|        " + getValue(hooman.cards.get(j)) + "| ");
+						else System.out.print("|        " + getValue(hooman.cards.get(j)) + "| ");
+						break;
+						
+					//Last line
+					case 9:
+						System.out.print("\\_________/ ");
+						break;
+					
+					//All lines in between
+					default:
+						switch(hooman.cards.get(j).suit) {
+							case 1:
+								System.out.print(club[k-3]);
+								break;
+							
+							case 2:
+								System.out.print(diamond[k-3]);
+								break;
+								
+							case 3:
+								System.out.print(heart[k-3]);
+								break;
+								
+							case 4:
+								System.out.print(spade[k-3]);
+								break;
+								
+							default:
+								System.out.print(empty[k-3]);
+								break;
+						}
+				}
+			}
+			//Line is finished, move to next line
+			System.out.println("");
+		}
+		//Aesthetic
+		System.out.println("");
+		return;
+	}
+	
+	//Plays the actions for all the computers in comps
+	//TODO: Dan's territory
+	public static void playComputers() {
+		System.out.println("Computers have made their move");
+		return;
+	}
+	
+	//Deal one card to the player, if bust, flag bust
+	public static void hit(Player player) {
+		player.cards.add(deck.get(drawIndex++));
+		player.setBust(calcBust(player));
+		return;
+	}
+	
+	//Checks to see if the player has busted, returns 1 if bust, 0 if not
+	//TODO
+	public static int calcBust(Player player) {
+		return 0;
 	}
 	
 	//Prompts the player for an action, completes that action,
 	//CPUs complete their turn, and everything is set up for the next round
 	public static void playerAction() {
-		
+		Boolean raise = false;
+		Boolean check = false;
+		int input = 0;
+		System.out.println("What would you like to do?");
+		System.out.println("Please Enter the number cooresponding with the action you want to take:");
+		System.out.println("1. Hit");
+		System.out.println("2. Pass");
+		System.out.println("3. PLACEHOLDER");
+		System.out.println("4. Quit Game");
+		while(!check) {
+			try {
+				input = in.nextInt();
+				check = true;
+			} catch (Exception e) {
+				System.out.println("Please enter a valid option.");
+			}
+		}
+		//TODO: get rid of the "raise = true;" lines when done testing 
+		while(!raise) {
+			switch(input) {
+				case 1:
+					System.out.println("You are dealt another card.");
+					hit(hooman);
+					playComputers();
+					raise = true;
+					break;
+					
+				case 2:
+					System.out.println("You passed this round.");
+					playComputers();
+					raise = true;
+					break;
+					
+				case 3:
+					System.out.println("PLACEHOLDER DOES NOTHING, IT'S SUPER EFFECTIVE");
+					break;
+					
+				case 4:
+					shutdown();
+					break;
+			}
+		}
 	}
 	
 	//Deals the cards to the player and all CPUs
 	public static void deal() {
 		for (int i = 0; i < comps.size(); i++) {
-			comps.get(i).one = deck.get(drawIndex++);
-			comps.get(i).two = deck.get(drawIndex++);
+			comps.get(i).insertCards(deck.get(drawIndex++));
+			comps.get(i).insertCards(deck.get(drawIndex++));
 		}
-		hooman.one = deck.get(drawIndex++);
-		hooman.two = deck.get(drawIndex++);
+		hooman.insertCards(deck.get(drawIndex++));
+		hooman.insertCards(deck.get(drawIndex++));
 		return;
 	}
 	
@@ -134,6 +361,22 @@ public class Engine {
 		return;
 	}
 	
+	//Set up each CPU and add them to the global list after initializing values
+	public static void initializePlayers() {
+		hooman.cards = new ArrayList<Card>();
+		hooman.setBust(0);
+		hooman.setNumChips(chipSetting);
+		
+		for (int i = 0; i < numCPU; i++) {
+			Player temp = new Player();
+			temp.setNumChips(chipSetting);
+			temp.setBust(0);
+			temp.cards = new ArrayList<Card>();
+			comps.add(temp);
+		}
+		return;
+	}
+	
 	//Setup the deck for the first time and shuffle the cards for a new game
 	public static void start() {
 		System.out.println("Setting up deck...");
@@ -158,7 +401,7 @@ public class Engine {
 		System.out.println("Current starting chip amount (Default: 1,000): " + chipSetting);
 		System.out.println("Difficulty Guideline: 0 - Easy, 1 - Medium, 2 - Hard, 3 - Insane");
 		System.out.println("Current CPU Difficulty level (Default: 0): " + difficulty);
-		System.out.println("Current number of CPUs (Default: 3): " + numCPU);
+		System.out.println("Current number of CPUs (Default: 3, Min: 1, Max: 5): " + numCPU);
 		while (true) {
 			System.out.println("To change the starting chip amount type: 'chips (amount)' where (amount) is the number of chips you want to start with.");
 			System.out.println("To change the difficulty level type: 'difficulty (level)' where (level) is the number cooresponding to the level of difficulty.");
@@ -191,7 +434,7 @@ public class Engine {
 				String numCPU = input.substring(4);
 				try {
 					int newNumCPU = Integer.parseInt(numCPU);
-					if (newNumCPU <= 0 || newNumCPU >= 8) System.out.println("I'm sorry, that wasnt a proper number of CPUs (0 < number < 8)");
+					if (newNumCPU <= 0 || newNumCPU >= 5) System.out.println("I'm sorry, that wasnt a proper number of CPUs (0 < number < 6)");
 					else Engine.numCPU = newNumCPU;
 				} catch (Exception e) {
 					System.out.println("I'm sorry, that wasnt a proper number of CPUs (0 < number < 8)");
@@ -240,6 +483,7 @@ public class Engine {
 				break;
 				
 			case 2:
+				initializePlayers();
 				start();
 				break;
 				
@@ -260,20 +504,29 @@ public class Engine {
 		return;
 	}
 	
+	public static void shutdown() {
+		in.close();
+		System.out.println("Bye-Bye!");
+		System.exit(0);	
+	}
+	
 	public static void main(String args[]) {
 		//Initialize globals to defaults
 		in = new Scanner(System.in);
 		numCPU = 3;
 		chipSetting = 1000;
 		difficulty = 0;
-		comps = new ArrayList<CPU>();
+		comps = new ArrayList<Player>();
 		hooman = new Player();
+		shutdown = false;
 		
 		//Print start menu
 		mm();
 		
 		//Code to start game rounds goes here
-		play();
+		while (!shutdown) {
+			play();
+		}
 	}
 }
 
