@@ -30,7 +30,7 @@ public class CPU {
 		/*Hard*/	{ 1, 1, 1,   1, 1,  0, 0,   0, -1, -1},
 	};
 	
-	//This is typically what a dealer will do
+	//This is what the average player will do (y axis is player hand, x axis is dealer's visible card)
 	//0 is stay
 	//1 is hit
 	//2 is double down (if not allowed, then hit)
