@@ -6,7 +6,7 @@ public class CPU {
 	
 	public double[][] systems = {
 		/*
-		 * T:   
+		 * T: Cards with value 10 (10, J, Q, K)
 		 * BC: Betting Correlation: effectiveness of the system (the higher the better)
 		 * PE: Playing Efficiency: effectiveness of a system's determination of correct playing variations (the higher the better)
 		 * IC: Insurance Correlation: 
@@ -22,7 +22,14 @@ public class CPU {
 
 	};
 	
-	//13 across, 16 down, this is typically what a dealer will do
+	public int[][] cpuStrats = {
+		//	 		  2  3  4    5  6   7  8    9   T  Ace
+		/*Easy*/	{ 1, 1, 1,   0, 0,  0, 0,   0,  0, -1},
+		/*Medium*/	{ 1, 1, 1,   0, 0,  0, 0,   0, -1, -1},
+		/*Hard*/	{ 1, 1, 1,   1, 1,  0, 0,   0, -1, -1},
+	}
+	
+	//This is typically what a dealer will do
 	//0 is stay
 	//1 is hit
 	//2 is double down (if not allowed, then hit)
