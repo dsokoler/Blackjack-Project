@@ -466,7 +466,10 @@ public class Engine {
 			
 			//Get input
 			try {
-				choice = in.nextInt();
+            String input = in.nextLine();
+            input = input.replace("\n", "");
+            choice = Integer.parseInt(input);
+				//choice = in.nextInt();
 				check = true;
 			} catch (Exception e) {
 				System.out.println("Improper Input");
