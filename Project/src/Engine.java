@@ -454,15 +454,15 @@ public class Engine {
 		Boolean check = false;
 		int choice = 0;
 		
-		//Print menu
-		System.out.println("Welcome to BlackJack!");
-		System.out.println("Please enter a number cooresponding to an option.");
-		System.out.println("1. Rules");
-		System.out.println("2. Start Game");
-		System.out.println("3. Settings");
-		System.out.println("4. Exit");
-		
 		while (!check) {
+      
+         //Print menu
+   		System.out.println("Welcome to BlackJack!");
+   		System.out.println("Please enter a number cooresponding to an option.");
+   		System.out.println("1. Rules");
+   		System.out.println("2. Start Game");
+   		System.out.println("3. Settings");
+   		System.out.println("4. Exit");
 			
 			//Get input
 			try {
@@ -472,37 +472,40 @@ public class Engine {
 				//choice = in.nextInt();
 				check = true;
 			} catch (Exception e) {
-				System.out.println("Improper Input");
+				System.out.println("Invalid Input: Input must be a number");
 				mm();
 				return;
 			}
-		}
 		
-		//Switch based on input
-		switch (choice) {
-			case 1:
-				rules();
-				mm();
-				break;
-				
-			case 2:
-				initializePlayers();
-				start();
-				break;
-				
-			case 3:
-				settings();
-				mm();
-				break;
-				
-			case 4:
-				System.out.println("Good-Bye!");
-				in.close();
-				System.exit(0);
-				break;
-				
-			default:
-		}
+   		//Switch based on input
+   		switch (choice) {
+   			case 1:
+   				rules();
+   				mm();
+   				break;
+   				
+   			case 2:
+   				initializePlayers();
+   				start();
+   				break;
+   				
+   			case 3:
+   				settings();
+   				mm();
+   				break;
+   				
+   			case 4:
+   				System.out.println("Good-Bye!");
+   				in.close();
+   				System.exit(0);
+   				break;
+   				
+   			default:
+               System.out.println("Invalid input: Input must be in range [1-4].");
+               check = false;
+   		}// END Switch
+      
+      }// END while(!check)
 		
 		return;
 	}
