@@ -13,6 +13,10 @@ public class Engine {
 	static int chipSetting;
 	static int difficulty;
 	static int numCPU;
+	
+	static boolean doubleDown = false;
+	static boolean surrender = false;
+	
 	static String[] club = {"|    _    | ",
 							"|   (_)   | ",
 							"|  (_)_)  | ",
@@ -247,6 +251,62 @@ public class Engine {
 	//Plays the actions for all the computers in comps
 	//TODO: Dan's territory
 	public static void playComputers() {
+		int hoomanFaceUp = hooman.cards.get(1).value;
+		for (Player cpu : comps) {
+			int total = cpu.handValue();
+			boolean handSizeOfTwo = (cpu.cards.size() == 2);
+			if (handSizeOfTwo && cpu.cards.get(0).value == 1) {	//HOW DO WE DEFINE ACES AND FACE CARDS???
+				//Use softTotals table
+			}
+			else if (handSizeOfTwo && (cpu.cards.get(0).value == cpu.cards.get(1).value)) {
+				//SPLIT
+			}
+			else {
+				//Use hardTotals table
+				//0 is stay
+				//1 is hit
+				//2 is double down (if not allowed, then hit)
+				//3 is double down (if not allowed, then stand)
+				//4 is Split
+				//5 is Surrender (if not allowed, then hit)
+				int action = cpu.hardTotals[hoomanFaceUp][total-5];
+				switch(action) {
+					case 0:		//Stay
+						
+						break;
+					case 1:		//Hit
+						hit(cpu);
+						break;
+					case 2:		//Double down (if not allowed, then hit)
+						if (doubleDown) {
+							
+						}
+						else {
+							hit(cpu);
+						}
+						break;
+					case 3:		//Double down (if not allowed, then stand)
+						if (doubleDown) {
+							
+						}
+						else {
+							
+						}
+						break;
+					case 4:		//Split
+						
+						break;
+					case 5:		//Surrender (if not allowed, then hit)
+						if (surrender) {
+							
+						}
+						else {
+							hit(cpu);
+						}
+						break;
+				}
+			}
+		}
 		System.out.println("Computers have made their move");
 		return;
 	}
