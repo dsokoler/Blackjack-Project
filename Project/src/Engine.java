@@ -256,18 +256,18 @@ public class Engine {
 			int total = cpu.handValue();
 			System.out.println("CPU HAND VALUE: " + total);
 			boolean handSizeOfTwo = (cpu.cards.size() == 2);
-			if (handSizeOfTwo) {	//HOW DO WE DEFINE ACES AND FACE CARDS???
-				int action = 0;
-				if (cpu.cards.get(0).value == 1) {
-					action = cpu.softTotals[cpu.cards.get(1).value][hoomanFaceUp];
-				}
-				else if (cpu.cards.get(1).value == 1) {
-					action = cpu.softTotals[cpu.cards.get(0).value][hoomanFaceUp];
-				}
+			if (handSizeOfTwo && cpu.cards.get(0).value == 1) {	//HOW DO WE DEFINE ACES AND FACE CARDS???
+				System.out.println("");
+				int action = cpu.softTotals[cpu.cards.get(1).value][hoomanFaceUp];
 				//Use softTotals table
+			}
+			else if (handSizeOfTwo && cpu.cards.get(1).value == 1) {
+				System.out.println("Ace as Card 2");
+				int action = cpu.softTotals[cpu.cards.get(0).value][hoomanFaceUp];
 			}
 			else if (handSizeOfTwo && (cpu.cards.get(0).value == cpu.cards.get(1).value)) {
 				//SPLIT
+				System.out.println("SPLITTING");
 			}
 			else {
 				//Use hardTotals table
@@ -280,12 +280,14 @@ public class Engine {
 				int action = cpu.hardTotals[total-6][hoomanFaceUp];
 				switch(action) {
 					case 0:		//Stay
-						
+						System.out.println("STAY");
 						break;
 					case 1:		//Hit
+						System.out.println("HIT");
 						hit(cpu);
 						break;
 					case 2:		//Double down (if not allowed, then hit)
+						System.out.println();
 						if (doubleDown) {
 							
 						}
@@ -294,6 +296,7 @@ public class Engine {
 						}
 						break;
 					case 3:		//Double down (if not allowed, then stand)
+						System.out.println("DDS");
 						if (doubleDown) {
 							
 						}
@@ -302,9 +305,10 @@ public class Engine {
 						}
 						break;
 					case 4:		//Split
-						
+						System.out.println("SPLIT");
 						break;
 					case 5:		//Surrender (if not allowed, then hit)
+						System.out.println("SURRENDER");
 						if (surrender) {
 							
 						}
