@@ -130,7 +130,7 @@ public class Engine {
 							//If one of the first two cards, don't print the value
 							if (j < 2) System.out.print("|{{{{{{{{{| ");
 							else {
-								if (!(getValue(curr.cards.get(j)).equals("10"))) System.out.print("|        " + getValue(curr.cards.get(j)) + "| ");
+								if (!(getValue(curr.cards.get(j)).equals("10"))) System.out.print("|       " + getValue(curr.cards.get(j)) + "| ");
 								else System.out.print("|        " + getValue(curr.cards.get(j)) + "| ");
 							}
 							break;
@@ -494,7 +494,7 @@ public class Engine {
 				String numCPU = input.substring(4);
 				try {
 					int newNumCPU = Integer.parseInt(numCPU);
-					if (newNumCPU <= 0 || newNumCPU >= 5) System.out.println("I'm sorry, that wasnt a proper number of CPUs (0 < number < 6)");
+					if (newNumCPU <= 0 || newNumCPU >= 6) System.out.println("I'm sorry, that wasnt a proper number of CPUs (0 < number < 6)");
 					else Engine.numCPU = newNumCPU;
 				} catch (Exception e) {
 					System.out.println("I'm sorry, that wasnt a proper number of CPUs (0 < number < 8)");
@@ -516,19 +516,19 @@ public class Engine {
 		
 		while (!check) {
       
-         //Print menu
-   		System.out.println("Welcome to BlackJack!");
-   		System.out.println("Please enter a number cooresponding to an option.");
-   		System.out.println("1. Rules");
-   		System.out.println("2. Start Game");
-   		System.out.println("3. Settings");
-   		System.out.println("4. Exit");
-			
+	         //Print menu
+	   		System.out.println("Welcome to BlackJack!");
+	   		System.out.println("Please enter a number cooresponding to an option.");
+	   		System.out.println("1. Rules");
+	   		System.out.println("2. Start Game");
+	   		System.out.println("3. Settings");
+	   		System.out.println("4. Exit");
+				
 			//Get input
 			try {
-            String input = in.nextLine();
-            input = input.replace("\n", "");
-            choice = Integer.parseInt(input);
+	            String input = in.nextLine();
+	            input = input.replace("\n", "");
+	            choice = Integer.parseInt(input);
 				//choice = in.nextInt();
 				check = true;
 			} catch (Exception e) {
@@ -536,34 +536,34 @@ public class Engine {
 				mm();
 				return;
 			}
-		
-   		//Switch based on input
-   		switch (choice) {
-   			case 1:
-   				rules();
-   				mm();
-   				break;
-   				
-   			case 2:
-   				initializePlayers();
-   				start();
-   				break;
-   				
-   			case 3:
-   				settings();
-   				mm();
-   				break;
-   				
-   			case 4:
-   				System.out.println("Good-Bye!");
-   				in.close();
-   				System.exit(0);
-   				break;
-   				
-   			default:
-               System.out.println("Invalid input: Input must be in range [1-4].");
-               check = false;
-   		}// END Switch
+			
+	   		//Switch based on input
+	   		switch (choice) {
+	   			case 1:
+	   				rules();
+	   				mm();
+	   				break;
+	   				
+	   			case 2:
+	   				initializePlayers();
+	   				start();
+	   				break;
+	   				
+	   			case 3:
+	   				settings();
+	   				mm();
+	   				break;
+	   				
+	   			case 4:
+	   				System.out.println("Good-Bye!");
+	   				in.close();
+	   				System.exit(0);
+	   				break;
+	   				
+	   			default:
+	               System.out.println("Invalid input: Input must be in range [1-4].");
+	               check = false;
+	   		}// END Switch
       
       }// END while(!check)
 		
