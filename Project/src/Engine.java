@@ -255,8 +255,9 @@ public class Engine {
 		for (Player cpu : comps) {
 			int total = cpu.handValue();
 			boolean handSizeOfTwo = (cpu.cards.size() == 2);
-			if (handSizeOfTwo && cpu.cards.get(0).value == 1) {	//HOW DO WE DEFINE ACES AND FACE CARDS???
+			if (handSizeOfTwo && (cpu.cards.get(0).value == 1 || cpu.cards.get(1).value == 1)) {	//HOW DO WE DEFINE ACES AND FACE CARDS???
 				//Use softTotals table
+				int action = cpu.softTotals[cpu.cards.get(1).value][hoomanFaceUp];
 			}
 			else if (handSizeOfTwo && (cpu.cards.get(0).value == cpu.cards.get(1).value)) {
 				//SPLIT
@@ -269,7 +270,7 @@ public class Engine {
 				//3 is double down (if not allowed, then stand)
 				//4 is Split
 				//5 is Surrender (if not allowed, then hit)
-				int action = cpu.hardTotals[hoomanFaceUp][total-5];
+				int action = cpu.hardTotals[total-5][hoomanFaceUp];
 				switch(action) {
 					case 0:		//Stay
 						
@@ -596,6 +597,14 @@ public class Engine {
 	}
 }
 
+/* 
+ * Card value guide:
+ * 1 = Ace
+ * 2-10 = Corresponding number card
+ * 11 = Jack
+ * 12 = Queen
+ * 13 = King
+ */
 class Card {
 	int suit;
 	int value;
