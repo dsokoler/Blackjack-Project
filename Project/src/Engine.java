@@ -130,7 +130,7 @@ public class Engine {
 							//If one of the first two cards, don't print the value
 							if (j < 2) System.out.print("|{{{{{{{{{| ");
 							else {
-								if (!(getValue(curr.cards.get(j)).equals("10"))) System.out.print("|       " + getValue(curr.cards.get(j)) + "| ");
+								if (!(getValue(curr.cards.get(j)).equals("10"))) System.out.print("|        " + getValue(curr.cards.get(j)) + "| ");
 								else System.out.print("|        " + getValue(curr.cards.get(j)) + "| ");
 							}
 							break;
@@ -254,10 +254,17 @@ public class Engine {
 		int hoomanFaceUp = hooman.cards.get(1).value;
 		for (Player cpu : comps) {
 			int total = cpu.handValue();
+			System.out.println("CPU HAND VALUE: " + total);
 			boolean handSizeOfTwo = (cpu.cards.size() == 2);
-			if (handSizeOfTwo && (cpu.cards.get(0).value == 1 || cpu.cards.get(1).value == 1)) {	//HOW DO WE DEFINE ACES AND FACE CARDS???
+			if (handSizeOfTwo) {	//HOW DO WE DEFINE ACES AND FACE CARDS???
+				int action = 0;
+				if (cpu.cards.get(0).value == 1) {
+					action = cpu.softTotals[cpu.cards.get(1).value][hoomanFaceUp];
+				}
+				else if (cpu.cards.get(1).value == 1) {
+					action = cpu.softTotals[cpu.cards.get(0).value][hoomanFaceUp];
+				}
 				//Use softTotals table
-				int action = cpu.softTotals[cpu.cards.get(1).value][hoomanFaceUp];
 			}
 			else if (handSizeOfTwo && (cpu.cards.get(0).value == cpu.cards.get(1).value)) {
 				//SPLIT
@@ -270,7 +277,7 @@ public class Engine {
 				//3 is double down (if not allowed, then stand)
 				//4 is Split
 				//5 is Surrender (if not allowed, then hit)
-				int action = cpu.hardTotals[total-5][hoomanFaceUp];
+				int action = cpu.hardTotals[total-6][hoomanFaceUp];
 				switch(action) {
 					case 0:		//Stay
 						
