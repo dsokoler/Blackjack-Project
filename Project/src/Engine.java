@@ -118,7 +118,7 @@ public class Engine {
 						//Third line
 						case 2:
 							//If one of the first two cards, don't print the value
-							if (j < 2) System.out.print("|{{{{{{{{{| ");
+							if (j < 1) System.out.print("|{{{{{{{{{| ");
 							else {
 								if (!(getValue(curr.cards.get(j)).equals("10"))) System.out.print("|" + getValue(curr.cards.get(j)) + "        | ");
 								else System.out.print("|" + getValue(curr.cards.get(j)) + "       | ");
@@ -128,10 +128,10 @@ public class Engine {
 						//Second to last line
 						case 8:
 							//If one of the first two cards, don't print the value
-							if (j < 2) System.out.print("|{{{{{{{{{| ");
+							if (j < 1) System.out.print("|{{{{{{{{{| ");
 							else {
-								if (!(getValue(curr.cards.get(j)).equals("10"))) System.out.print("|       " + getValue(curr.cards.get(j)) + "| ");
-								else System.out.print("|        " + getValue(curr.cards.get(j)) + "| ");
+								if (!(getValue(curr.cards.get(j)).equals("10"))) System.out.print("|        " + getValue(curr.cards.get(j)) + "| ");
+								else System.out.print("|       " + getValue(curr.cards.get(j)) + "| ");
 							}
 							break;
 							
@@ -143,7 +143,7 @@ public class Engine {
 						//All lines in between
 						default:
 							//If one of the first two cards, don't print the suit
-							if (j < 2) System.out.print(empty[k-3]);
+							if (j < 1) System.out.print(empty[k-3]);
 							else {
 								switch(curr.cards.get(j).suit) {
 									case 1:
@@ -207,7 +207,7 @@ public class Engine {
 					//Second to last line
 					case 8:
 						if (!(getValue(hooman.cards.get(j)).equals("10"))) System.out.print("|        " + getValue(hooman.cards.get(j)) + "| ");
-						else System.out.print("|        " + getValue(hooman.cards.get(j)) + "| ");
+						else System.out.print("|       " + getValue(hooman.cards.get(j)) + "| ");
 						break;
 						
 					//Last line
