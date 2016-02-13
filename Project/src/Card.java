@@ -28,4 +28,34 @@ public class Card {
 	public void setValue(int set) { 
 		value = set; 
 	}
+	
+	//Returns the card's value as a string
+	public String getStringValue() {
+		String stringValue = "";
+		if (this.value == 1 || this.value > 10) {
+			switch (this.value) {
+				case 11:
+					stringValue = "J";
+					break;
+					
+				case 12:
+					stringValue = "Q";
+					break;
+					
+				case 13:
+					stringValue = "K";
+					break;
+					
+				case 1:
+					stringValue = "A";
+					break;
+					
+				default:
+					stringValue = " ";
+					break;
+			}
+		}
+		else stringValue = Integer.toString(this.value);
+		return stringValue;
+	}
 }
