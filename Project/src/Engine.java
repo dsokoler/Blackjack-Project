@@ -382,6 +382,7 @@ public class Engine {
 		}
 	}
 	
+	//TODO
 	public static boolean handHasBeenWon() {
 		return false;	
 	}
@@ -523,6 +524,7 @@ public class Engine {
 	
 	//Allows the player to change the game settings
 	public static void settings() {
+		Scanner settings = new Scanner(System.in);
 		System.out.println("Current starting chip amount (Default: " + DEFAULT_CHIP_SETTING + "): " + chipSetting);
 		System.out.println("Difficulty Guideline: " + CPU_EASY + " - Easy, "
 				+ CPU_MEDIUM + " - Medium, "
@@ -537,8 +539,8 @@ public class Engine {
 			System.out.println("To change the number of CPUs typs: 'cpu (number)' where number is how many computers you wish to play against.");
 			System.out.println("To return to the menu type: 'return'");
 			System.out.println("");
-			String input = in.nextLine();
-			System.out.println("input: '" + input + "'");
+			String input = settings.nextLine();
+			//System.out.println("input: '" + input + "'");
 			if (input.contains("difficulty")) {
 				String level = input.substring(11);
 				try {
@@ -570,7 +572,10 @@ public class Engine {
 				}
 				
 			}
-			else if (input.equals("return")) mainMenu();
+			else if (input.equals("return")) {
+				settings.close();
+				mainMenu();
+			}
 			else System.out.println("I'm sorry, thats not a proper command.");
 			System.out.println("");
 		}

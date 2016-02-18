@@ -29,6 +29,8 @@ public class Player {
 		return playerHand; 
 	}
 	
+	//TODO: Double check logic on this function, what about Aces being 1 or 11?
+	//Are the face card values correct? I.E. jack = 11, etc.
 	public int handValue() {
 		int value = 0;
 		for (Card card : playerHand) {
