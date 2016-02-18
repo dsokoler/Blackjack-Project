@@ -60,7 +60,9 @@ public class Engine {
 	
 	
 	//Begins a round of play with human and computers
-	public static void play() {
+	public static void playGame() {
+		
+		while (handHasBeenWon() == false){
 		//Print board
 		printBoard();
 		
@@ -69,11 +71,43 @@ public class Engine {
 		
 		//Prompt player for an action
 		playerAction();
-		
-		return;
+				
 	}
+		//hand has been won
+		askForNewRound();
+}
+
+
+
+
+	private static void askForNewRound() {
+		System.out.println("The hand is over, would you like to :\n"
+				+ "1. Play another game\n"
+				+ "2. Return to main menu\n"
+				+ "3. Quit"
+				);
+		Scanner scanner = new Scanner(System.in);
+		String input = scanner.nextLine();
+		
+		if (input.equals("1")){
+			initializeGame();
+			playGame();
+		}
+		else if (input.equals("2")){
+			mainMenu();
+		}
+		else if (input.equals("3")){
+			quit();
+		}
+		else{
+			System.out.println("Invalid Input");
+			askForNewRound();
+		}
+}	
 	
-	
+
+
+
 	//Will print all the CPU's hands as should be viewed by the player
 	//Meaning the first two cards are blank backs and all other cards are face up
 	public static void printBoard() {
@@ -348,6 +382,10 @@ public class Engine {
 		}
 	}
 	
+	public static boolean handHasBeenWon() {
+		return false;	
+	}
+	
 	//Prompts the player for an action, completes that action,
 	//CPUs complete their turn, and everything is set up for the next round
 	public static void playerAction() {
@@ -389,7 +427,7 @@ public class Engine {
 					break;
 					
 				case 4:
-					shutdown();
+					quit();
 					break;
 			}
 		}
@@ -445,7 +483,7 @@ public class Engine {
 		return;
 	}
 	
-	//Set up each CPU and add them to the global list after initializing values
+	//Set up the player and each CPU and add them to the global list after initializing values
 	public static void initializePlayers() {
 		human.playerHand = new ArrayList<Card>();
 		human.setHasBusted(false);
@@ -462,7 +500,9 @@ public class Engine {
 	}
 	
 	//Setup the deck for the first time and shuffle the cards for a new game
-	public static void start() {
+	public static void initializeGame() {
+		System.out.println("Setting up players...");
+		initializePlayers();
 		System.out.println("Setting up deck...");
 		initializeDeck();
 		System.out.println("Shuffling cards...");
@@ -530,7 +570,7 @@ public class Engine {
 				}
 				
 			}
-			else if (input.equals("return")) return;
+			else if (input.equals("return")) mainMenu();
 			else System.out.println("I'm sorry, thats not a proper command.");
 			System.out.println("");
 		}
@@ -573,20 +613,17 @@ public class Engine {
 	   				mainMenu();
 	   				break;
 	   				
-	   			case 2:
-	   				initializePlayers();
-	   				start();
+	   			case 2:		
+	   				initializeGame();
+	   				playGame();
 	   				break;
 	   				
 	   			case 3:
 	   				settings();
-	   				mainMenu();
 	   				break;
 	   				
 	   			case 4:
-	   				System.out.println("Good-Bye!");
-	   				in.close();
-	   				System.exit(0);
+	   				quit();
 	   				break;
 	   				
 	   			default:
@@ -599,7 +636,7 @@ public class Engine {
 		return;
 	}
 	
-	public static void shutdown() {
+	public static void quit() {
 		in.close();
 		System.out.println("Bye-Bye!");
 		System.exit(0);	
@@ -618,10 +655,6 @@ public class Engine {
 		//Print start menu
 		mainMenu();
 		
-		//Code to start game rounds goes here
-		while (gameRunning) {
-			play();
-		}
 	}
 }
 
