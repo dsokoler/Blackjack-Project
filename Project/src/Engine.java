@@ -279,7 +279,7 @@ public class Engine {
 	//Plays the actions for all the computers in comps
 	//TODO: Dan's territory
 	public static void playComputers() {
-		int hoomanFaceUp = human.playerHand.get(1).value;
+		int hoomanFaceUp = human.playerHand.get(1).value - 1;
 		for (Player cpu : computers) {
 			int total = cpu.handValue();
 			System.out.println("CPU HAND VALUE: " + total);
@@ -289,13 +289,13 @@ public class Engine {
          if(checkForBust(cpu))   continue;
          
 			boolean handSizeOfTwo = (cpu.playerHand.size() == 2);
-			if (handSizeOfTwo && cpu.playerHand.get(0).value == 1) {	//HOW DO WE DEFINE ACES AND FACE CARDS???
+			if (handSizeOfTwo && cpu.playerHand.get(0).value == 1) {
 				System.out.println("");
 				int action = LookupTables.softTotals[cpu.playerHand.get(1).value][hoomanFaceUp];
 				//Use softTotals table
 			}
 			else if (handSizeOfTwo && cpu.playerHand.get(1).value == 1) {
-				System.out.println("Ace as Card 2");
+				System.out.println("Ace as Card 2: [" + cpu.playerHand.get(0) + "][" + hoomanFaceUp + "]");
 				int action = LookupTables.softTotals[cpu.playerHand.get(0).value][hoomanFaceUp];
 			}
 			else if (handSizeOfTwo && (cpu.playerHand.get(0).value == cpu.playerHand.get(1).value)) {

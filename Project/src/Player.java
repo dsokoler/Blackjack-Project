@@ -38,6 +38,7 @@ public class Player {
 		int value = 0;
 		int numAces = 0;
 		for (Card card : playerHand) {
+			System.out.println("Card Value: " + card.value);
 			if (card.value == 1) {
 				numAces++;
 				value += 11;
@@ -52,6 +53,7 @@ public class Player {
 			}
 			else numAces--;
 		}
+		System.out.println("HAND VALUE RETURNS: " + value);
 		return value;
 	}
 	
