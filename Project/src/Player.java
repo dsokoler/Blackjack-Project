@@ -8,6 +8,8 @@ public class Player {
 	ArrayList<Card> playerHand;
 	//If player receives two of the same card, have option to split and create another hand
 	ArrayList<Card> splitHand;
+   
+   String lastAction = "";
 		
 	public int getNumChips() { 
 		return numChips;
@@ -46,4 +48,12 @@ public class Player {
 	public void insertCard(Card c){ 
 		playerHand.add(c);
 	}
+   
+   public String getLastAction(){
+      return lastAction;
+   }
+   
+   public void setLastAction(String set){
+      lastAction = set;
+   }
 }

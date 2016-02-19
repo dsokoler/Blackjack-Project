@@ -63,19 +63,19 @@ public class Engine {
 	public static void playGame() {
 		
 		while (handHasBeenWon() == false){
-		//Print board
-		printBoard();
-		
-		//Print player's hand
-		printHand();
-		
-		//Prompt player for an action
-		playerAction();
+   		//Print board
+   		printBoard();
+   		
+   		//Print player's hand
+   		printHand();
+   		
+   		//Prompt player for an action
+   		playerAction();
 				
-	}
+	   }
 		//hand has been won
 		askForNewRound();
-}
+   }
 
 
 
@@ -103,7 +103,7 @@ public class Engine {
 			System.out.println("Invalid Input");
 			askForNewRound();
 		}
-}	
+   }	
 	
 
 
@@ -119,10 +119,10 @@ public class Engine {
 			else size = currentPlayer.playerHand.size();
 			System.out.println("Hand for CPU " + i + ": ");
 			//Loop for each line to be printed
-			for (int line = 0; line < 10; line++) {
-				//Loop for each card in hand
-				for (int cardIndex = 0; cardIndex < size; cardIndex++) {
-					
+			for (int line = 0; line < 10; line++){
+         
+               //Loop for each card in hand
+               for (int cardIndex = 0; cardIndex < size; cardIndex++) {
 					Card currentCard = currentPlayer.playerHand.get(cardIndex);
 					String currentCardValue = currentCard.getStringValue();
 					
@@ -187,13 +187,13 @@ public class Engine {
 									default:
 										System.out.print(empty[line-3]);
 										break;
-								}
-							}
-					}
-				}
+								}// END inner switch
+							}// END else
+					}// END switch(line)
+				}// END for(line)
 				//Line is finished, move to next line
 				System.out.println("");
-			}
+			}// END for(computers)
 			//Aesthetic
 			System.out.println("");
 		}
@@ -369,7 +369,7 @@ public class Engine {
 	}
 	
 	public static void stay(Player player){
-			//TODO? (Is this action needed?)
+			//TODO? (Is this action needed?) yes, we need to know when all players chose to stay for end game condition
 	}
 	
 	//Checks to see if the player has busted, returns 1 if bust, 0 if not
@@ -385,6 +385,56 @@ public class Engine {
 	
 	//TODO
 	public static boolean handHasBeenWon() {
+      ArrayList<Player> winners = new ArrayList<Player>(); // Used to store which players have won. ArrayList in case of a tie
+      
+      // Check if all players have busted --> Dealer wins
+      boolean allBust = true;
+      if(!human.getHasBusted())   allBust = false;
+      for(int i = 0; i <  computers.size(); i++){
+         if(!computers.get(i).getHasBusted())    allBust = false;
+      }
+      if(allBust){
+         // Dealer wins
+         //winners.add(dealerObjectHere);
+         return true;
+      }
+      
+      // Check if any single player has 21 --> 
+      //    If so, check if tie with any other player
+      //    Else, player with highest hand wins
+      
+      if(human.handValue() == 21){
+      //TODO   
+      }
+      for(int i = 0; i < computers.size(); i++){
+         if(computers.get(i).handValue() == 21){
+            winners.add(computers.get(i));
+         }
+      }
+      
+      boolean allStay = true;
+      if(!human.getLastAction().equals("stay")) allStay = false;
+      for(int i = 0; i < computers.size(); i++){
+         if(!computers.get(i).getLastAction().equals("stay"))  allStay = false;
+      }
+      if(allStay){
+      //TODO
+      }
+      
+      
+      // Check if any single player has 5 cards no bust --> Automatic win
+      if(human.getCards().size() >= 5 && human.handValue() <= 21){
+         winners.add(human);
+         return true;
+      }
+      for(int i = 0; i < computers.size(); i++){
+         if(computers.get(i).getCards().size() >= 5 && computers.get(i).handValue() <= 21){
+            winners.add(computers.get(i));
+            return true;
+         }
+      }
+      
+      // 
 		return false;	
 	}
 	
