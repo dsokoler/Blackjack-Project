@@ -202,6 +202,7 @@ public class Engine {
 	//Prints all the player's cards face up
 	public static void printHand() {
 		int size;
+      System.out.println("Chips:     " + human.getNumChips());
 		System.out.println("Your hand: ");
 		if (human.playerHand.isEmpty()) size = 0;
 		else size = human.playerHand.size();
@@ -499,11 +500,41 @@ public class Engine {
 		}
 		return;
 	}
+   
+   public static void initializeBets() {
+      // Do for all players
+      // for(Player player : players) ???
+      System.out.println("Enter your initial bet...");
+      System.out.println("Current chip amount: " + human.getNumChips());
+      int bet = 0;
+      boolean valid = false;
+      while(!valid){
+         String betStr = in.nextLine();
+         betStr = betStr.replace("\n", "");
+         try{      
+            bet = Integer.parseInt(betStr);
+            if(bet > human.getNumChips()){
+               System.out.println("Error: You cannot bet more chips than you currently have.");
+            }else if(bet < 1){
+               System.out.println("Error: You must place a bet between 1 and " + human.getNumChips() + " chips.");
+            }else{
+               valid = true;
+               human.setNumChips(human.getNumChips() - bet);
+            }
+         }catch(Exception e){
+            System.out.println("Error: Please enter a valid integer.");
+         }
+      }
+      //} // END for(Player...)
+   }
 	
 	//Setup the deck for the first time and shuffle the cards for a new game
 	public static void initializeGame() {
+   
 		System.out.println("Setting up players...");
 		initializePlayers();
+      System.out.println("Setting up initial bets...");
+      initializeBets();
 		System.out.println("Setting up deck...");
 		initializeDeck();
 		System.out.println("Shuffling cards...");
