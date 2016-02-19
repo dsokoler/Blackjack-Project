@@ -293,12 +293,16 @@ public class Engine {
 
 			boolean handSizeOfTwo = (cpu.playerHand.size() == 2);
 			if (handSizeOfTwo && cpu.playerHand.get(0).value == 1) {
-				int action = LookupTables.softTotals[cardTwo - 1][hoomanFaceUp];
+				if (cardOne <= 8) {
+					int action = LookupTables.softTotals[cardTwo - 2][hoomanFaceUp - 1];
+				}
 				//Use softTotals table
 			}
 			else if (handSizeOfTwo && cpu.playerHand.get(1).value == 1) {
 				System.out.println("Ace as Card 2: [" + cardOne + "][" + hoomanFaceUp + "]");
-				int action = LookupTables.softTotals[cardOne - 1][hoomanFaceUp];
+				if (cardOne <= 8) {
+					int action = LookupTables.softTotals[cardOne - 2][hoomanFaceUp - 1];
+				}
 			}
 			else if (handSizeOfTwo && (cpu.playerHand.get(0).value == cpu.playerHand.get(1).value)) {
 				//SPLIT
