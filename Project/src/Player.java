@@ -31,12 +31,26 @@ public class Player {
 		return playerHand; 
 	}
 	
-	//TODO: Double check logic on this function, what about Aces being 1 or 11?
-	//Are the face card values correct? I.E. jack = 11, etc.
+	//Aces assumed 11 unless bust, then are reverted to 1's as needed
+	//Number cards are valued at face value
+	//Face cards are all worth 10 with exception of the ace
 	public int handValue() {
 		int value = 0;
+		int numAces = 0;
 		for (Card card : playerHand) {
-			value += card.value;
+			if (card.value == 1) {
+				numAces++;
+				value += 11;
+			}
+			if (card.value > 10) value += 10;
+			else value += card.value;
+		}
+		while (numAces > 0) {
+			if (value > 21 && numAces > 0) {
+				value = (value - 11) + 1;
+				numAces--;
+			}
+			else numAces--;
 		}
 		return value;
 	}
