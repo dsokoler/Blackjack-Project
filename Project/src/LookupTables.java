@@ -4,22 +4,22 @@ public class LookupTables {
 	//TODO : add comment describing the purpose of this class 
 	
 	public static double[][] systems = {
-			/*
-			  T: Cards with value 10 (10, J, Q, K)
-			  BC: Betting Correlation: effectiveness of the system (the higher the better)
-			  PE: Playing Efficiency: effectiveness of a system's determination of correct playing variations (the higher the better)
-			  IC: Insurance Correlation: 
-			  Bal: Balanced or Unbalanced: 
-			//				  2  3  4    5  6   7  8    9   T  Ace  BC   PE   IC Bal?
-			/*Hi-Lo*/		{ 1, 1, 1,   1, 1,  0, 0,   0, -1, -1, .97, .51, .76, 1},
-			/*K-O*/			{ 1, 1, 1,   1, 1,  1, 0,   0, -1, -1, .98, .55, .78, 0},
-			/*Hi-Opt 1*/	{ 0, 1, 1,   1, 1,  0, 0,   0, -1,  0, .88, .61, .85, 1},
-			/*Hi-Opt 2*/	{ 1, 1, 2,   2, 1,  1, 0,   0, -1,  0, .91, .67, .91, 1},
-			/*Halves*/		{.5, 1, 1, 1.5, 1, .5, 0, -.5, -1, -1, .99, .56, .72, 1},
-			/*Omega II*/	{ 1, 1, 2,   2, 2,  1, 0,  -1, -2,  0, .92, .67, .86, 1},
-			/*Zen*/			{ 1, 1, 2,   2, 2,  1, 0,   0, -1, -1, .96, .63, .85, 1}
+		/*
+		  T: Cards with value 10 (10, J, Q, K)
+		  BC: Betting Correlation: effectiveness of the system (the higher the better)
+		  PE: Playing Efficiency: effectiveness of a system's determination of correct playing variations (the higher the better)
+		  IC: Insurance Correlation: 
+		  Bal: Balanced or Unbalanced: 
+		//				  2  3  4    5  6   7  8    9   T  Ace  BC   PE   IC Bal?
+		/*Hi-Lo*/		{ 1, 1, 1,   1, 1,  0, 0,   0, -1, -1, .97, .51, .76, 1},
+		/*K-O*/			{ 1, 1, 1,   1, 1,  1, 0,   0, -1, -1, .98, .55, .78, 0},
+		/*Hi-Opt 1*/	{ 0, 1, 1,   1, 1,  0, 0,   0, -1,  0, .88, .61, .85, 1},
+		/*Hi-Opt 2*/	{ 1, 1, 2,   2, 1,  1, 0,   0, -1,  0, .91, .67, .91, 1},
+		/*Halves*/		{.5, 1, 1, 1.5, 1, .5, 0, -.5, -1, -1, .99, .56, .72, 1},
+		/*Omega II*/	{ 1, 1, 2,   2, 2,  1, 0,  -1, -2,  0, .92, .67, .86, 1},
+		/*Zen*/			{ 1, 1, 2,   2, 2,  1, 0,   0, -1, -1, .96, .63, .85, 1}
 
-		};
+	};
 	
 	public static int[][] cpuStrats = {
 		//	 		  2  3  4    5  6   7  8    9   T  Ace
