@@ -282,6 +282,11 @@ public class Engine {
 		for (Player cpu : computers) {
 			int total = cpu.handValue();
 			System.out.println("CPU HAND VALUE: " + total);
+         
+         // Check if the player has busted
+         // if yes, skip the player
+         if(checkForBust(cpu))   continue;
+         
 			boolean handSizeOfTwo = (cpu.playerHand.size() == 2);
 			if (handSizeOfTwo && cpu.playerHand.get(0).value == 1) {	//HOW DO WE DEFINE ACES AND FACE CARDS???
 				System.out.println("");
@@ -441,15 +446,23 @@ public class Engine {
 	//Prompts the player for an action, completes that action,
 	//CPUs complete their turn, and everything is set up for the next round
 	public static void playerAction() {
-		Boolean raise = false;
-		Boolean check = false;
+		boolean raise = false;
+		boolean check = false;
+      boolean bust = checkForBust(human);
 		int input = 0;
-		System.out.println("What would you like to do?");
-		System.out.println("Please Enter the number cooresponding with the action you want to take:");
-		System.out.println("1. Hit");
-		System.out.println("2. Pass");
-		System.out.println("3. PLACEHOLDER");
-		System.out.println("4. Quit Game");
+      if(bust){
+         System.out.println("Sorry, you have busted.");
+         System.out.println("Please Enter the number corresponding with the action you want to take:");
+         System.out.println("1. Continue");
+         System.out.println("2. Quit Game");
+      }else{
+   		System.out.println("What would you like to do?");
+   		System.out.println("Please Enter the number cooresponding with the action you want to take:");
+   		System.out.println("1. Hit");
+   		System.out.println("2. Pass");
+   		System.out.println("3. PLACEHOLDER");
+   		System.out.println("4. Quit Game");
+      }
 		while(!check) {
 			try {
 				input = in.nextInt();
@@ -459,19 +472,29 @@ public class Engine {
 			}
 		}
 		//TODO: get rid of the "raise = true;" lines when done testing 
-		while(!raise) {
+		while(!raise && !bust) {
 			switch(input) {
 				case 1:
-					System.out.println("You are dealt another card.");
-					hit(human);
-					playComputers();
-					raise = true;
+               if(bust){
+                  System.out.println("You have chosen to continue.");
+                  playComputers();
+                  raise = true;               
+               }else{
+   					System.out.println("You are dealt another card.");
+   					hit(human);
+   					playComputers();
+   					raise = true;
+               }
 					break;
 					
 				case 2:
-					System.out.println("You passed this round.");
-					playComputers();
-					raise = true;
+               if(bust){
+                  quit();  
+               }else{
+   					System.out.println("You passed this round.");
+   					playComputers();
+   					raise = true;
+               }
 					break;
 					
 				case 3:
@@ -483,6 +506,7 @@ public class Engine {
 					break;
 			}
 		}
+      
 	}
 	
 	//Deals the cards to the player and all CPUs
