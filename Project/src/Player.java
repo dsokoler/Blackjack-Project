@@ -38,13 +38,14 @@ public class Player {
 		int value = 0;
 		int numAces = 0;
 		for (Card card : playerHand) {
-			System.out.println("Card Value: " + card.value);
+			int cardValue = card.getValue();
+			System.out.println("Card Value: " + cardValue);
 			if (card.value == 1) {
 				numAces++;
 				value += 11;
 			}
-			if (card.value > 10) value += 10;
-			else value += card.value;
+			else if (cardValue > 10) value += 10;
+			else value += cardValue;
 		}
 		while (numAces > 0) {
 			if (value > 21 && numAces > 0) {
