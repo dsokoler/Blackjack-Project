@@ -202,7 +202,6 @@ public class Engine {
 	//Prints all the player's cards face up
 	public static void printHand() {
 		int size;
-      System.out.println("Chips:     " + human.getNumChips());
 		System.out.println("Your hand: ");
 		if (human.playerHand.isEmpty()) size = 0;
 		else size = human.playerHand.size();
@@ -271,6 +270,8 @@ public class Engine {
 			System.out.println("");
 		}
 		//Aesthetic
+		System.out.println("");
+		System.out.println("Number of remaining chips: " + human.getNumChips());
 		System.out.println("");
 		return;
 	}
@@ -578,8 +579,8 @@ public class Engine {
    public static void initializeBets() {
       // Do for all players
       // for(Player player : players) ???
-      System.out.println("Enter your initial bet...");
-      System.out.println("Current chip amount: " + human.getNumChips());
+	  System.out.println("Current chip amount: " + human.getNumChips());
+      System.out.println("Please enter the number of chips you would like to bet this round.");
       int bet = 0;
       boolean valid = false;
       while(!valid){
@@ -607,14 +608,14 @@ public class Engine {
    
 		System.out.println("Setting up players...");
 		initializePlayers();
-      System.out.println("Setting up initial bets...");
-      initializeBets();
 		System.out.println("Setting up deck...");
 		initializeDeck();
 		System.out.println("Shuffling cards...");
 		shuffle();
 		System.out.println("Dealing hands...");
 		deal();
+		System.out.println("Setting up initial bets...");
+	    initializeBets();
 		System.out.println("");
 		return;
 	}
@@ -629,7 +630,6 @@ public class Engine {
 	
 	//Allows the player to change the game settings
 	public static void settings() {
-		Scanner settings = new Scanner(System.in);
 		System.out.println("Current starting chip amount (Default: " + DEFAULT_CHIP_SETTING + "): " + chipSetting);
 		System.out.println("Difficulty Guideline: " + CPU_EASY + " - Easy, "
 				+ CPU_MEDIUM + " - Medium, "
@@ -644,42 +644,64 @@ public class Engine {
 			System.out.println("To change the number of CPUs typs: 'cpu (number)' where number is how many computers you wish to play against.");
 			System.out.println("To return to the menu type: 'return'");
 			System.out.println("");
-			String input = settings.nextLine();
+			String input = in.nextLine();
 			//System.out.println("input: '" + input + "'");
 			if (input.contains("difficulty")) {
-				String level = input.substring(11);
-				try {
-					int newLevel = Integer.parseInt(level);
-					if (newLevel < 0 || newLevel > 3) System.out.println("I'm sorry, that wasnt a proper difficulty setting (-1 < difficulty < 4)");
-					else difficulty = newLevel;
-				} catch (Exception e) {
-					System.out.println("I'm sorry, that wasnt a proper difficulty setting (-1 < difficulty < 4)");
+				String level = null;
+				if (input.length() > 10) {
+					level = input.substring(11);
+					try {
+						int newLevel = Integer.parseInt(level);
+						if (newLevel < 0 || newLevel > 3) System.out.println("I'm sorry, that wasnt a proper difficulty setting (-1 < difficulty < 4)");
+						else {
+							difficulty = newLevel;
+							System.out.println("New difficulty setting is: " + difficulty);
+						}
+					} catch (Exception e) {
+						System.out.println("I'm sorry, that wasnt a proper difficulty setting (-1 < difficulty < 4)");
+					}
+				}
+				else {
+					System.out.println("I'm sorry that wasnt a proper input, there must be a space then an integer following the word 'difficulty'.");
 				}
 			}
 			else if (input.contains("chips")) {
-				String amount = input.substring(6);
-				try {
-					int newAmount = Integer.parseInt(amount);
-					if (newAmount <= 0 || newAmount >= 10000000) System.out.println("I'm sorry, that wasnt a proper chip amount (0 < amount < 10,000,000)");
-					else chipSetting = newAmount;
-				} catch (Exception e) {
-					System.out.println("I'm sorry, that wasnt a proper chip amount (0 < amount < 10,000,000)");
+				String amount = null;
+				if (input.length() > 5) {
+					amount = input.substring(6);
+					try {
+						int newAmount = Integer.parseInt(amount);
+						if (newAmount <= 0 || newAmount >= 10000000) System.out.println("I'm sorry, that wasnt a proper chip amount (0 < amount < 10,000,000)");
+						else {
+							chipSetting = newAmount;
+							System.out.println("New chip setting is: " + chipSetting);
+						}
+					} catch (Exception e) {
+						System.out.println("I'm sorry, that wasnt a proper chip amount (0 < amount < 10,000,000)");
+					}
 				}
+				else System.out.println("I'm sorry that wasnt a proper input, there must be a space then an integer following the word 'chips'.");
 			}
 			else if (input.contains("cpu")) {
-				String numCPU = input.substring(4);
-				try {
-					int newNumCPU = Integer.parseInt(numCPU);
-					if (newNumCPU <= 0 || newNumCPU >= 6) System.out.println("I'm sorry, that wasnt a proper number of CPUs (0 < number < 6)");
-					else Engine.numCPU = newNumCPU;
-				} catch (Exception e) {
-					System.out.println("I'm sorry, that wasnt a proper number of CPUs (0 < number < 8)");
+				String numCPU = null;
+				if (input.length() > 3) {
+					numCPU = input.substring(4);
+					try {
+						int newNumCPU = Integer.parseInt(numCPU);
+						if (newNumCPU <= 0 || newNumCPU >= 6) System.out.println("I'm sorry, that wasnt a proper number of CPUs (0 < number < 6)");
+						else {
+							Engine.numCPU = newNumCPU;
+							System.out.println("New CPU setting is: " + Engine.numCPU);
+						}
+					} catch (Exception e) {
+						System.out.println("I'm sorry, that wasnt a proper number of CPUs (0 < number < 8)");
+					}
 				}
-				
+				else System.out.println("I'm sorry that wasnt a proper input, there must be a space then an integer following the word 'cpu'.");
 			}
 			else if (input.equals("return")) {
-				settings.close();
 				mainMenu();
+				return;
 			}
 			else System.out.println("I'm sorry, thats not a proper command.");
 			System.out.println("");
