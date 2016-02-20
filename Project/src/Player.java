@@ -15,7 +15,7 @@ public class Player {
    String lastAction = "";
    String ID = "";
    
-   public Player(){}
+   public Player(){playerHand = new ArrayList<Card>();}
    public Player(String id){
       ID = id;
    }
