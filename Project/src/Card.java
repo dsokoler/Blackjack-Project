@@ -12,6 +12,12 @@ public class Card {
 	
 	int suit;
 	int value;
+   
+   public Card(){}
+   
+   public Card(int v){
+      value = v;
+   }
 	
 	public int getSuit() { 
 		return suit; 
