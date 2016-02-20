@@ -315,27 +315,21 @@ public class Engine {
 		int humanHandValue = human.getHand().get(1).value - 1;
 		for (Player cpu : computers) {
 			int total = cpu.handValue();
-<<<<<<< HEAD
-			int cardOne = cpu.playerHand.get(0).value;
-			int cardTwo = cpu.playerHand.get(1).value;
+
+			int cardOne = cpu.getHand().get(0).getValue();
+			int cardTwo = cpu.getHand().get(1).getValue();
 			//System.out.println("CPU " + cpu.getID() + " HAND VALUE: " + total);
-=======
-			int cardOne = cpu.getHand().get(0).value;
-			int cardTwo = cpu.getHand().get(1).value;
-			System.out.println("CPU HAND VALUE: " + total);
->>>>>>> 2a798ac2e21f40057766101c3c024f2f34b3cb75
+
 			//System.out.println("CPU CARDS: " + cardOne + " " + cardTwo);
 
 			// Check if the player has busted
 			// if yes, skip the player
-<<<<<<< HEAD
-			if(checkForBust(cpu)){
+
+			if(cpu.getHasBusted()){
             cpu.setLastAction("stay");
             continue;
          }
-=======
-			if(cpu.getHasBusted())   continue;
->>>>>>> 2a798ac2e21f40057766101c3c024f2f34b3cb75
+
 
 			boolean handSizeOfTwo = (cpu.getHand().size() == 2);
 			if (handSizeOfTwo && cpu.getHand().get(0).value == 1) {
@@ -644,17 +638,17 @@ public class Engine {
 		return;
 	}
 
-<<<<<<< HEAD
+
 	//Set up the player and each CPU and add them to the global list after initializing values
 	public static void initializePlayers() {
       computers = new ArrayList<Player>();
 		human = new Player("Human");
+      dealer = new Player(startingChipCount);
       winners = new ArrayList<Player>();
 		human.playerHand = new ArrayList<Card>();
 		human.setHasBusted(false);
 		human.setNumChips(chipSetting);
-=======
->>>>>>> 2a798ac2e21f40057766101c3c024f2f34b3cb75
+   }
 
 	//Set up each CPU
 	public static void initializeCPU() {
@@ -878,14 +872,7 @@ public class Engine {
 		numCPU = DEFAULT_CPU_COUNT_SETTING;
 		startingChipCount = DEFAULT_CHIP_SETTING;
 		difficulty = DEFAULT_CPU_DIFFICULTY_SETTING;
-<<<<<<< HEAD
-=======
-		computers = new ArrayList<Player>();
 
-		human = new Player(startingChipCount);
-		dealer = new Player(startingChipCount);
-
->>>>>>> 2a798ac2e21f40057766101c3c024f2f34b3cb75
 		gameRunning = true;
 
 		//Print start menu
