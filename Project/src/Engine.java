@@ -8,14 +8,15 @@ public class Engine {
 	static Scanner in;
 	static ArrayList<Card> deck;
 	static ArrayList<Player> computers;
-   static ArrayList<Player> winners; // Used to store which players have won. ArrayList in case of a tie
+	static ArrayList<Player> winners; // Used to store which players have won. ArrayList in case of a tie
 	static Player human;
+	static String playerDisplayName;
 	static Player dealer;
 	static int drawIndex;
 	static int startingChipCount;
 	static int difficulty;
 	static int numCPU;
-   static int chipPot = 0;               // Sum of all chips bet for the current game
+	static int chipPot = 0;               // Sum of all chips bet for the current game
 
 	static final int CPU_EASY = 0;
 	static final int CPU_MEDIUM = 1;
@@ -31,7 +32,6 @@ public class Engine {
 
 	static boolean doubleDown = false;
 	static boolean surrender = false;
-	static boolean gameRunning;
 
 	static String[] club = {"|    _    | ",
 			"|   (_)   | ",
@@ -69,37 +69,27 @@ public class Engine {
 		printBoard();
 
 		while (handHasBeenWon() == false){
-
-			//Print player's hand
 			printHand();
 
-			//Prompt player for an action
-			playerAction();
-
-			
-			computerAction();
-			
+			playerAction();			
+			computerAction();			
 			dealerAction();
-
-         
-         // Print board after moves have been made
-         printBoard();
-
-
+      
+			printBoard();
 		}
       
-      // Split winnings evenly amongst winners
-      splitWinnings();
+		// Split winnings evenly amongst winners
+		splitWinnings();
       
 		//hand has been won
-		askForNewRound();
+      	askForNewRound();
 	}
 
    private static void splitWinnings(){
       int payout = (int)(chipPot / winners.size());
-      for(Player p : winners){
-         p.setNumChips(p.getNumChips() + payout);
-         System.out.print("Player " + p.getID() + " has won " + payout + " chips!");
+      for(Player player : winners){
+         player.setNumChips(player.getNumChips() + payout);
+         System.out.print("Player " + player.getDisplayName() + " has won " + payout + " chips!");
       }
    }
 
@@ -415,7 +405,6 @@ public class Engine {
 		else if(dealer.handValue() < 17){
 			Card card = deck.get(drawIndex++);
 			dealer.hit(card);
-
 		}
 		else{
 			dealer.stay();
@@ -571,9 +560,11 @@ public class Engine {
 	//Deals the cards to the player and all CPUs
 	public static void deal() {
 		for (int i = 0; i < computers.size(); i++) {
+			//draw two cards
 			computers.get(i).insertCard(deck.get(drawIndex++));
 			computers.get(i).insertCard(deck.get(drawIndex++));
 		}
+		//draw two cards
 		human.insertCard(deck.get(drawIndex++));
 		human.insertCard(deck.get(drawIndex++));
 		return;
@@ -622,7 +613,7 @@ public class Engine {
 	//Set up each CPU
 	public static void initializeCPU() {
 		for (int i = 0; i < numCPU; i++) {
-			Player computer = new Player(startingChipCount);
+			Player computer = new Player(startingChipCount, "CPU " + i);
 			computers.add(computer);
 		}				
 		return;
@@ -659,7 +650,7 @@ public class Engine {
 	//Setup the deck for the first time and shuffle the cards for a new game
 	public static void initializeGame() {
 
-		System.out.println("Setting up players...");
+		System.out.println("Setting up CPUs...");
 		initializeCPU();
 		System.out.println("Setting up deck...");
 		initializeDeck();
@@ -834,11 +825,12 @@ public class Engine {
 		startingChipCount = DEFAULT_CHIP_SETTING;
 		difficulty = DEFAULT_CPU_DIFFICULTY_SETTING;
 		computers = new ArrayList<Player>();
-
-		human = new Player(startingChipCount);
-		dealer = new Player(startingChipCount);
-
-		gameRunning = true;
+		
+		//allows update w/ account serialization
+		playerDisplayName = "Player";
+		
+		human = new Player(startingChipCount, playerDisplayName);
+		dealer = new Player(startingChipCount, "Dealer");
 
 		//Print start menu
 		mainMenu();

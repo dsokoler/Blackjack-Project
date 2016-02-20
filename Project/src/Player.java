@@ -4,9 +4,9 @@ public class Player {
 	//player's current chip count
 
 	private int numChips;
-	//indicates if player has busted on their hand or not
 	private boolean hasBusted;
 	private boolean isStaying;
+	private String displayName;
 	
 	private ArrayList<Card> playerHand;
 
@@ -21,11 +21,16 @@ public class Player {
       ID = id;
    }
 		
-    public Player(int startingChipCount){
+    public Player(int startingChipCount, String displayName){
     	this.numChips = startingChipCount;
     	this.hasBusted = false;
     	this.isStaying = false;
+    	this.displayName = displayName;
     	playerHand = new ArrayList<Card>();
+    }
+    
+    public String getDisplayName(){
+    	return displayName;
     }
     
 	public int getNumChips() { 
