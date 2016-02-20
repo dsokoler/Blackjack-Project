@@ -8,11 +8,13 @@ public class Engine {
 	static Scanner in;
 	static ArrayList<Card> deck;
 	static ArrayList<Player> computers;
+   static ArrayList<Player> winners; // Used to store which players have won. ArrayList in case of a tie
 	static Player human;
 	static int drawIndex;
 	static int chipSetting;
 	static int difficulty;
 	static int numCPU;
+   static int chipPot = 0;               // Sum of all chips bet for the current game
 
 	static final int CPU_EASY = 0;
 	static final int CPU_MEDIUM = 1;
@@ -73,12 +75,21 @@ public class Engine {
 			playerAction();
 
 		}
+      
+      // Split winnings evenly amongst winners
+      splitWinnings();
+      
 		//hand has been won
 		askForNewRound();
 	}
 
-
-
+   private static void splitWinnings(){
+      int payout = (int)(chipPot / winners.size());
+      for(Player p : winners){
+         p.setNumChips(p.getNumChips() + payout);
+         System.out.print("Player {IDENTIFIER} has won " + payout + " chips!");
+      }
+   }
 
 	private static void askForNewRound() {
 		System.out.println("The hand is over, would you like to :\n"
@@ -322,24 +333,27 @@ public class Engine {
 				switch(action) {
 				case 0:		//Stay
 					System.out.println("STAY");
+               cpu.setLastAction("stay");
 					break;
 				case 1:		//Hit
 					System.out.println("HIT");
+               cpu.setLastAction("hit");
 					hit(cpu);
 					break;
 				case 2:		//Double down (if not allowed, then hit)
 					System.out.println();
 					if (doubleDown) {
-
+                  cpu.setLastAction("double down");
 					}
 					else {
 						hit(cpu);
+                  cpu.setLastAction("hit");
 					}
 					break;
 				case 3:		//Double down (if not allowed, then stand)
 					System.out.println("DDS");
 					if (doubleDown) {
-
+               
 					}
 					else {
 
@@ -347,18 +361,21 @@ public class Engine {
 					break;
 				case 4:		//Split
 					System.out.println("SPLIT");
+               cpu.setLastAction("split");
 					break;
 				case 5:		//Surrender (if not allowed, then hit)
 					System.out.println("SURRENDER");
 					if (surrender) {
-
+                  cpu.setLastAction("surrender");
 					}
 					else {
 						hit(cpu);
+                  cpu.setLastAction("hit");
 					}
 					break;
 				}
 			}
+         System.out.println("CPU chose to " + cpu.getLastAction());
 		}
 		System.out.println("Computers have made their move");
 		return;
@@ -366,22 +383,20 @@ public class Engine {
 
 	//Deal one card to the player, if bust, flag bust
 	public static void hit(Player player) {
-
+      
 		player.playerHand.add(deck.get(drawIndex++));
-
-		if (checkForBust(player) == true){
-			player.setHasBusted(true);
-		}	
-
+      player.setLastAction("hit");
 		return;
 	}
 
 	public static void split(Player player){
 		//TODO
+      player.setLastAction("split");
 	}
 
 	public static void stay(Player player){
 		//TODO? (Is this action needed?) yes, we need to know when all players chose to stay for end game condition
+      player.setLastAction("stay");
 	}
 
 	//Checks to see if the player has busted, returns 1 if bust, 0 if not
@@ -397,7 +412,6 @@ public class Engine {
 
 	//TODO
 	public static boolean handHasBeenWon() {
-		ArrayList<Player> winners = new ArrayList<Player>(); // Used to store which players have won. ArrayList in case of a tie
 
 		// Check if all players have busted --> Dealer wins
 		boolean allBust = true;
@@ -413,26 +427,54 @@ public class Engine {
 
 		// Check if any single player has 21 --> 
 		//    If so, check if tie with any other player
-		//    Else, player with highest hand wins
-
 		if(human.handValue() == 21){
-			//TODO   
+			winners.add(human);
 		}
 		for(int i = 0; i < computers.size(); i++){
 			if(computers.get(i).handValue() == 21){
 				winners.add(computers.get(i));
 			}
 		}
-
-		boolean allStay = true;
+      if(winners.size() > 0){
+         return true;
+      }
+      
+      // If no objects in winners here, nobody has 21. Check for all stay
+      // tmp player object to record player with highest hand
+      boolean allStay = true;
 		if(!human.getLastAction().equals("stay")) allStay = false;
 		for(int i = 0; i < computers.size(); i++){
 			if(!computers.get(i).getLastAction().equals("stay"))  allStay = false;
 		}
 		if(allStay){
-			//TODO
+			// Check for highest hand
+         Player tmp = new Player();
+         tmp.insertCard(new Card(2));
+         if(human.handValue() > tmp.handValue()){
+            tmp = human;
+         }
+         for(Player cpu : computers){
+            if(cpu.handValue() > tmp.handValue()){
+               tmp = cpu;
+            }
+         }
+         
+         // Check for a tie with the highest hand
+         if(tmp != human && human.handValue() == tmp.handValue()){
+            winners.add(human);
+            // Should never happen since first checking if human has highest THEN checking CPU's...
+         }
+         for(Player cpu : computers){
+            if(tmp != cpu && cpu.handValue() == tmp.handValue()){
+               winners.add(cpu);
+            }
+         }
+         // All tied players should now be in winners arraylist
+         // split winnings here
+         
+         return true;
 		}
-
+      
 
 		// Check if any single player has 5 cards no bust --> Automatic win
 		if(human.getCards().size() >= 5 && human.handValue() <= 21){
@@ -479,7 +521,7 @@ public class Engine {
 			}
 		}
 		//TODO: get rid of the "raise = true;" lines when done testing 
-		while(!raise && !bust) {
+		while(!raise) {
 			switch(input) {
 			case 1:
 				if(bust){
@@ -568,6 +610,7 @@ public class Engine {
 
 	//Set up the player and each CPU and add them to the global list after initializing values
 	public static void initializePlayers() {
+      winners = new ArrayList<Player>();
 		human.playerHand = new ArrayList<Card>();
 		human.setHasBusted(false);
 		human.setNumChips(chipSetting);
@@ -601,6 +644,7 @@ public class Engine {
 				}else{
 					valid = true;
 					human.setNumChips(human.getNumChips() - bet);
+               chipPot += bet;
 				}
 			}catch(Exception e){
 				System.out.println("Error: Please enter a valid integer.");

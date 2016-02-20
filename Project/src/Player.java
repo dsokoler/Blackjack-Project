@@ -9,7 +9,7 @@ public class Player {
 	//If player receives two of the same card, have option to split and create another hand
 	ArrayList<Card> splitHand;
    
-    String lastAction = "";
+   String lastAction = "";
 		
 	public int getNumChips() { 
 		return numChips;
@@ -53,6 +53,7 @@ public class Player {
 			}
 			else numAces--;
 		}
+      if(value > 21) setHasBusted(true);
 		return value;
 	}
 	
