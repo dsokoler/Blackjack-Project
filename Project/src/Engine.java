@@ -9,8 +9,9 @@ public class Engine {
 	static ArrayList<Card> deck;
 	static ArrayList<Player> computers;
 	static Player human;
+	static Player dealer;
 	static int drawIndex;
-	static int chipSetting;
+	static int startingChipCount;
 	static int difficulty;
 	static int numCPU;
 
@@ -71,6 +72,10 @@ public class Engine {
 
 			//Prompt player for an action
 			playerAction();
+			
+			computerAction();
+			
+			dealerAction();
 
 		}
 		//hand has been won
@@ -115,15 +120,15 @@ public class Engine {
 		for (int i = 0; i < computers.size(); i++) {
 			Player currentPlayer = computers.get(i);
 			int size;
-			if (currentPlayer.playerHand.isEmpty()) size = 0;
-			else size = currentPlayer.playerHand.size();
+			if (currentPlayer.getHand().isEmpty()) size = 0;
+			else size = currentPlayer.getHand().size();
 			System.out.println("Hand for CPU " + i + ": ");
 			//Loop for each line to be printed
 			for (int line = 0; line < 10; line++){
 
 				//Loop for each card in hand
 				for (int cardIndex = 0; cardIndex < size; cardIndex++) {
-					Card currentCard = currentPlayer.playerHand.get(cardIndex);
+					Card currentCard = currentPlayer.getHand().get(cardIndex);
 					String currentCardValue = currentCard.getStringValue();
 
 					switch(line) {
@@ -203,14 +208,14 @@ public class Engine {
 	public static void printHand() {
 		int size;
 		System.out.println("Your hand: ");
-		if (human.playerHand.isEmpty()) size = 0;
-		else size = human.playerHand.size();
+		if (human.getHand().isEmpty()) size = 0;
+		else size = human.getHand().size();
 		//Loop for each line to be printed
 		for (int line = 0; line < 10; line++) {
 			//Loop for each card in hand
 			for (int cardIndex = 0; cardIndex < size; cardIndex++) {
 
-				Card currentCard = human.playerHand.get(cardIndex);
+				Card currentCard = human.getHand().get(cardIndex);
 				String currentCardValue = currentCard.getStringValue();
 
 				switch(line) {
@@ -278,33 +283,33 @@ public class Engine {
 
 	//Plays the actions for all the computers in comps
 	//TODO: Dan's territory
-	public static void playComputers() {
-		int hoomanFaceUp = human.playerHand.get(1).value - 1;
+	public static void computerAction() {
+		int humanHandValue = human.getHand().get(1).value - 1;
 		for (Player cpu : computers) {
 			int total = cpu.handValue();
-			int cardOne = cpu.playerHand.get(0).value;
-			int cardTwo = cpu.playerHand.get(1).value;
+			int cardOne = cpu.getHand().get(0).value;
+			int cardTwo = cpu.getHand().get(1).value;
 			System.out.println("CPU HAND VALUE: " + total);
 			System.out.println("CPU CARDS: " + cardOne + " " + cardTwo);
 
 			// Check if the player has busted
 			// if yes, skip the player
-			if(checkForBust(cpu))   continue;
+			if(cpu.getHasBusted())   continue;
 
-			boolean handSizeOfTwo = (cpu.playerHand.size() == 2);
-			if (handSizeOfTwo && cpu.playerHand.get(0).value == 1) {
+			boolean handSizeOfTwo = (cpu.getHand().size() == 2);
+			if (handSizeOfTwo && cpu.getHand().get(0).value == 1) {
 				if (cardOne <= 8) {
-					int action = LookupTables.softTotals[cardTwo - 2][hoomanFaceUp - 1];
+					int action = LookupTables.softTotals[cardTwo - 2][humanHandValue - 1];
 				}
 				//Use softTotals table
 			}
-			else if (handSizeOfTwo && cpu.playerHand.get(1).value == 1) {
-				System.out.println("Ace as Card 2: [" + cardOne + "][" + hoomanFaceUp + "]");
+			else if (handSizeOfTwo && cpu.getHand().get(1).value == 1) {
+				System.out.println("Ace as Card 2: [" + cardOne + "][" + humanHandValue + "]");
 				if (cardOne <= 8) {
-					int action = LookupTables.softTotals[cardOne - 2][hoomanFaceUp - 1];
+					int action = LookupTables.softTotals[cardOne - 2][humanHandValue - 1];
 				}
 			}
-			else if (handSizeOfTwo && (cpu.playerHand.get(0).value == cpu.playerHand.get(1).value)) {
+			else if (handSizeOfTwo && (cpu.getHand().get(0).value == cpu.getHand().get(1).value)) {
 				//SPLIT
 				System.out.println("SPLITTING");
 			}
@@ -318,14 +323,16 @@ public class Engine {
 				4 is Split
 				5 is Surrender (if not allowed, then hit)
 				 */
-				int action = LookupTables.hardTotals[total-6][hoomanFaceUp];
+				int action = LookupTables.hardTotals[total-6][humanHandValue];
+				Card card;
 				switch(action) {
 				case 0:		//Stay
 					System.out.println("STAY");
 					break;
 				case 1:		//Hit
 					System.out.println("HIT");
-					hit(cpu);
+					card = deck.get(drawIndex++);
+					cpu.hit(card);
 					break;
 				case 2:		//Double down (if not allowed, then hit)
 					System.out.println();
@@ -333,7 +340,8 @@ public class Engine {
 
 					}
 					else {
-						hit(cpu);
+						card = deck.get(drawIndex++);
+						cpu.hit(card);
 					}
 					break;
 				case 3:		//Double down (if not allowed, then stand)
@@ -354,7 +362,8 @@ public class Engine {
 
 					}
 					else {
-						hit(cpu);
+						card = deck.get(drawIndex++);
+						cpu.hit(card);
 					}
 					break;
 				}
@@ -363,35 +372,17 @@ public class Engine {
 		System.out.println("Computers have made their move");
 		return;
 	}
-
-	//Deal one card to the player, if bust, flag bust
-	public static void hit(Player player) {
-
-		player.playerHand.add(deck.get(drawIndex++));
-
-		if (checkForBust(player) == true){
-			player.setHasBusted(true);
-		}	
-
-		return;
-	}
-
-	public static void split(Player player){
-		//TODO
-	}
-
-	public static void stay(Player player){
-		//TODO? (Is this action needed?) yes, we need to know when all players chose to stay for end game condition
-	}
-
-	//Checks to see if the player has busted, returns 1 if bust, 0 if not
-	//TODO
-	public static boolean checkForBust(Player player) {
-		if (player.handValue() > 21){
-			return true;
+	
+	public static void dealerAction(){
+		if(dealer.getIsStaying() == true || dealer.getHasBusted() == true){
+			return;
+		}
+		else if(dealer.handValue() < 17){
+			Card card = deck.get(drawIndex++);
+			dealer.hit(card);
 		}
 		else{
-			return false;
+			dealer.stay();
 		}
 	}
 
@@ -435,12 +426,12 @@ public class Engine {
 
 
 		// Check if any single player has 5 cards no bust --> Automatic win
-		if(human.getCards().size() >= 5 && human.handValue() <= 21){
+		if(human.getHand().size() >= 5 && human.handValue() <= 21){
 			winners.add(human);
 			return true;
 		}
 		for(int i = 0; i < computers.size(); i++){
-			if(computers.get(i).getCards().size() >= 5 && computers.get(i).handValue() <= 21){
+			if(computers.get(i).getHand().size() >= 5 && computers.get(i).handValue() <= 21){
 				winners.add(computers.get(i));
 				return true;
 			}
@@ -455,7 +446,7 @@ public class Engine {
 	public static void playerAction() {
 		boolean raise = false;
 		boolean check = false;
-		boolean bust = checkForBust(human);
+		boolean bust = human.getHasBusted();
 		int input = 0;
 		if(bust){
 			System.out.println("Sorry, you have busted.");
@@ -484,12 +475,11 @@ public class Engine {
 			case 1:
 				if(bust){
 					System.out.println("You have chosen to continue.");
-					playComputers();
 					raise = true;               
 				}else{
 					System.out.println("You are dealt another card.");
-					hit(human);
-					playComputers();
+					Card card = deck.get(drawIndex++);
+					human.hit(card);					
 					raise = true;
 				}
 				break;
@@ -499,7 +489,6 @@ public class Engine {
 					quit();  
 				}else{
 					System.out.println("You passed this round.");
-					playComputers();
 					raise = true;
 				}
 				break;
@@ -566,19 +555,12 @@ public class Engine {
 		return;
 	}
 
-	//Set up the player and each CPU and add them to the global list after initializing values
-	public static void initializePlayers() {
-		human.playerHand = new ArrayList<Card>();
-		human.setHasBusted(false);
-		human.setNumChips(chipSetting);
-
+	//Set up each CPU
+	public static void initializeCPU() {
 		for (int i = 0; i < numCPU; i++) {
-			Player computer = new Player();
-			computer.setNumChips(chipSetting);
-			computer.setHasBusted(false);
-			computer.playerHand = new ArrayList<Card>();
+			Player computer = new Player(startingChipCount);
 			computers.add(computer);
-		}
+		}				
 		return;
 	}
 
@@ -613,7 +595,7 @@ public class Engine {
 	public static void initializeGame() {
 
 		System.out.println("Setting up players...");
-		initializePlayers();
+		initializeCPU();
 		System.out.println("Setting up deck...");
 		initializeDeck();
 		System.out.println("Shuffling cards...");
@@ -636,7 +618,7 @@ public class Engine {
 
 	//Allows the player to change the game settings
 	public static void settings() {
-		System.out.println("Current starting chip amount (Default: " + DEFAULT_CHIP_SETTING + "): " + chipSetting);
+		System.out.println("Current starting chip amount (Default: " + DEFAULT_CHIP_SETTING + "): " + startingChipCount);
 		System.out.println("Difficulty Guideline: " + CPU_EASY + " - Easy, "
 				+ CPU_MEDIUM + " - Medium, "
 				+ CPU_HARD + " - Hard, "
@@ -679,8 +661,8 @@ public class Engine {
 						int newAmount = Integer.parseInt(amount);
 						if (newAmount <= 0 || newAmount >= 10000000) System.out.println("I'm sorry, that wasnt a proper chip amount (0 < amount < 10,000,000)");
 						else {
-							chipSetting = newAmount;
-							System.out.println("New chip setting is: " + chipSetting);
+							startingChipCount = newAmount;
+							System.out.println("New chip setting is: " + startingChipCount);
 						}
 					} catch (Exception e) {
 						System.out.println("I'm sorry, that wasnt a proper chip amount (0 < amount < 10,000,000)");
@@ -784,10 +766,11 @@ public class Engine {
 		//Initialize globals to defaults
 		in = new Scanner(System.in);
 		numCPU = DEFAULT_CPU_COUNT_SETTING;
-		chipSetting = DEFAULT_CHIP_SETTING;
+		startingChipCount = DEFAULT_CHIP_SETTING;
 		difficulty = DEFAULT_CPU_DIFFICULTY_SETTING;
 		computers = new ArrayList<Player>();
-		human = new Player();
+		human = new Player(startingChipCount);
+		dealer = new Player(startingChipCount);
 		gameRunning = true;
 
 		//Print start menu
