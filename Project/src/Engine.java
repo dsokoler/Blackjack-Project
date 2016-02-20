@@ -67,6 +67,9 @@ public class Engine {
 
       //Print board
 		printBoard();
+      
+      //Print player's hand
+		printHand();
 
 		while (handHasBeenWon() == false){
 			printHand();
@@ -86,10 +89,14 @@ public class Engine {
 	}
 
    private static void splitWinnings(){
-      int payout = (int)(chipPot / winners.size());
+
+      int payout = 0;
+      if(winners.size() > 0)
+         payout = (int)(chipPot / winners.size());
       for(Player player : winners){
          player.setNumChips(player.getNumChips() + payout);
          System.out.print("Player " + player.getDisplayName() + " has won " + payout + " chips!");
+
       }
    }
 
@@ -103,7 +110,8 @@ public class Engine {
 		String input = scanner.nextLine();
 
 		if (input.equals("1")){
-			initializeGame();
+			resetGame();
+         initializeGame();
 			playGame();
 		}
 		else if (input.equals("2")){
@@ -299,14 +307,21 @@ public class Engine {
 		int humanHandValue = human.getHand().get(1).value - 1;
 		for (Player cpu : computers) {
 			int total = cpu.handValue();
-			int cardOne = cpu.getHand().get(0).value;
-			int cardTwo = cpu.getHand().get(1).value;
-			System.out.println("CPU HAND VALUE: " + total);
+
+			int cardOne = cpu.getHand().get(0).getValue();
+			int cardTwo = cpu.getHand().get(1).getValue();
+			//System.out.println("CPU " + cpu.getID() + " HAND VALUE: " + total);
+
 			//System.out.println("CPU CARDS: " + cardOne + " " + cardTwo);
 
 			// Check if the player has busted
 			// if yes, skip the player
-			if(cpu.getHasBusted())   continue;
+
+			if(cpu.getHasBusted()){
+            cpu.setLastAction("stay");
+            continue;
+         }
+
 
 			boolean handSizeOfTwo = (cpu.getHand().size() == 2);
 			if (handSizeOfTwo && cpu.getHand().get(0).value == 1) {
@@ -354,7 +369,7 @@ public class Engine {
 				case 2:		//Double down (if not allowed, then hit)
 					System.out.println();
 					if (doubleDown) {
-                  cpu.setLastAction("double down");
+                  cpu.setLastAction("stay");
 					}
 					else {
 
@@ -367,20 +382,20 @@ public class Engine {
 				case 3:		//Double down (if not allowed, then stand)
 					System.out.println("DDS");
 					if (doubleDown) {
-                  cpu.setLastAction("dds");
+                  cpu.setLastAction("stay");
 					}
 					else {
-                  cpu.setLastAction("undefined");
+                  cpu.setLastAction("stay");
 					}
 					break;
 				case 4:		//Split
 					System.out.println("SPLIT");
-               cpu.setLastAction("split");
+               cpu.setLastAction("stay");
 					break;
 				case 5:		//Surrender (if not allowed, then hit)
 					System.out.println("SURRENDER");
 					if (surrender) {
-                  cpu.setLastAction("surrender");
+                  cpu.setLastAction("stay");
 					}
 					else {
 
@@ -390,9 +405,11 @@ public class Engine {
 
 					}
 					break;
+             default:
+               cpu.setLastAction("stay");
 				}
 			}
-         System.out.println("CPU chose to " + cpu.getLastAction());
+         System.out.println("CPU " + cpu.getID() + " chose to " + cpu.getLastAction());
 		}
 		System.out.println("Computers have made their move");
 		return;
@@ -500,7 +517,7 @@ public class Engine {
 		boolean check = false;
 		boolean bust = human.getHasBusted();
 		int input = 0;
-		if(bust){
+		/*if(bust){
 			System.out.println("Sorry, you have busted.");
 			System.out.println("Please Enter the number corresponding with the action you want to take:");
 			System.out.println("1. Continue");
@@ -509,40 +526,41 @@ public class Engine {
 			System.out.println("What would you like to do?");
 			System.out.println("Please Enter the number cooresponding with the action you want to take:");
 			System.out.println("1. Hit");
-			System.out.println("2. Pass");
+			System.out.println("2. Stay");
 			System.out.println("3. PLACEHOLDER");
 			System.out.println("4. Quit Game");
-		}
+		}*/
 		while(!check) {
+         check = true;
+      
+         System.out.println("What would you like to do?");
+			System.out.println("Please Enter the number cooresponding with the action you want to take:");
+			System.out.println("1. Hit");
+			System.out.println("2. Stay");
+			System.out.println("3. PLACEHOLDER");
+			System.out.println("4. Quit Game");
+      
 			try {
 				input = in.nextInt();
-				check = true;
 			} catch (Exception e) {
 				System.out.println("Please enter a valid option.");
 			}
-		}
-		//TODO: get rid of the "raise = true;" lines when done testing 
-		while(!raise) {
+		
 			switch(input) {
 			case 1:
 				if(bust){
-					System.out.println("You have chosen to continue.");
-					raise = true;               
+					System.out.println("You cannot hit after you have already busted.");
+               check = false;
 				}else{
 					System.out.println("You are dealt another card.");
 					Card card = deck.get(drawIndex++);
-					human.hit(card);					
-					raise = true;
+					human.hit(card);
 				}
 				break;
 
 			case 2:
-				if(bust){
-					quit();  
-				}else{
 					System.out.println("You passed this round.");
-					raise = true;
-				}
+
 				break;
 
 			case 3:
@@ -552,6 +570,9 @@ public class Engine {
 			case 4:
 				quit();
 				break;
+         
+         default:
+            check = false;
 			}
 		}
 
@@ -609,7 +630,6 @@ public class Engine {
 		return;
 	}
 
-
 	//Set up each CPU
 	public static void initializeCPU() {
 		for (int i = 0; i < numCPU; i++) {
@@ -663,6 +683,14 @@ public class Engine {
 		System.out.println("");
 		return;
 	}
+   
+   public static void resetGame() {
+      human = null;
+      for(Player cpu : computers)
+         cpu = null;
+      chipPot = 0;
+      winners = null;
+   }
 
 	//Prints the rules
 	//TODO PRINT GAME RULES
@@ -825,12 +853,14 @@ public class Engine {
 		startingChipCount = DEFAULT_CHIP_SETTING;
 		difficulty = DEFAULT_CPU_DIFFICULTY_SETTING;
 		computers = new ArrayList<Player>();
+	     winners = new ArrayList<Player>();
 		
 		//allows update w/ account serialization
 		playerDisplayName = "Player";
 		
 		human = new Player(startingChipCount, playerDisplayName);
 		dealer = new Player(startingChipCount, "Dealer");
+
 
 		//Print start menu
 		mainMenu();
