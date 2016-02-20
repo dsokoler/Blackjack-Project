@@ -2,13 +2,14 @@ import java.util.ArrayList;
 
 public class Player {
 	//player's current chip count
-	int numChips;
-   
+
+	private int numChips;
 	//indicates if player has busted on their hand or not
-	boolean hasBusted;
-   
-	ArrayList<Card> playerHand;
-   
+	private boolean hasBusted;
+	private boolean isStaying;
+	
+	private ArrayList<Card> playerHand;
+
 	//If player receives two of the same card, have option to split and create another hand
 	ArrayList<Card> splitHand;
    
@@ -20,6 +21,13 @@ public class Player {
       ID = id;
    }
 		
+    public Player(int startingChipCount){
+    	this.numChips = startingChipCount;
+    	this.hasBusted = false;
+    	this.isStaying = false;
+    	playerHand = new ArrayList<Card>();
+    }
+    
 	public int getNumChips() { 
 		return numChips;
 	}
@@ -36,8 +44,35 @@ public class Player {
 		hasBusted = set; 
 	}
 	
-	public ArrayList<Card> getCards() { 
+	public void setIsStaying(boolean set){
+		isStaying = set;
+	}
+	
+	public boolean getIsStaying(){
+		return isStaying;
+	}
+	
+	public ArrayList<Card> getHand() { 
 		return playerHand; 
+	}
+	
+	public static void split(Player player){
+		//TODO
+	}
+	
+	public void stay(){
+		setIsStaying(true);
+	}
+	
+	
+	
+	public void hit(Card card) {
+		
+		playerHand.add(card);
+		
+		if (handValue() > 21){
+			setHasBusted(true);
+		}	
 	}
 	
 	//Aces assumed 11 unless bust, then are reverted to 1's as needed
