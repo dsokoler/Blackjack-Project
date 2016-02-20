@@ -15,7 +15,7 @@ public class Engine {
 	static int drawIndex;
 	static int startingChipCount;
 	static int difficulty;
-	static int numCPU;
+	static int numCPU = 3;
 	static int chipPot = 0;               // Sum of all chips bet for the current game
 
 	static final int CPU_EASY = 0;
@@ -72,20 +72,20 @@ public class Engine {
 		printHand();
 
 		while (handHasBeenWon() == false){
-			printHand();
-
+			
 			playerAction();			
 			computerAction();			
 			dealerAction();
-      
+            
 			printBoard();
+         printHand();
 		}
       
 		// Split winnings evenly amongst winners
 		splitWinnings();
       
 		//hand has been won
-      	askForNewRound();
+      askForNewRound();
 	}
 
    private static void splitWinnings(){
@@ -226,7 +226,7 @@ public class Engine {
 	public static void printHand() {
 		int size;
 
-		System.out.println("Your hand: ");
+		System.out.println("Your hand: " + human.handValue());
 		if (human.getHand().isEmpty()) size = 0;
 		else size = human.getHand().size();
 
@@ -517,19 +517,7 @@ public class Engine {
 		boolean check = false;
 		boolean bust = human.getHasBusted();
 		int input = 0;
-		/*if(bust){
-			System.out.println("Sorry, you have busted.");
-			System.out.println("Please Enter the number corresponding with the action you want to take:");
-			System.out.println("1. Continue");
-			System.out.println("2. Quit Game");
-		}else{
-			System.out.println("What would you like to do?");
-			System.out.println("Please Enter the number cooresponding with the action you want to take:");
-			System.out.println("1. Hit");
-			System.out.println("2. Stay");
-			System.out.println("3. PLACEHOLDER");
-			System.out.println("4. Quit Game");
-		}*/
+		
 		while(!check) {
          check = true;
       
@@ -641,7 +629,6 @@ public class Engine {
 
 	public static void initializeBets() {
 		// Do for all players
-		// for(Player player : players) ???
 		System.out.println("Current chip amount: " + human.getNumChips());
 		System.out.println("Please enter the number of chips you would like to bet this round.");
 		int bet = 0;
@@ -853,10 +840,10 @@ public class Engine {
 		startingChipCount = DEFAULT_CHIP_SETTING;
 		difficulty = DEFAULT_CPU_DIFFICULTY_SETTING;
 		computers = new ArrayList<Player>();
-	     winners = new ArrayList<Player>();
+	   winners = new ArrayList<Player>();
 		
 		//allows update w/ account serialization
-		playerDisplayName = "Player";
+		playerDisplayName = "Human";
 		
 		human = new Player(startingChipCount, playerDisplayName);
 		dealer = new Player(startingChipCount, "Dealer");
