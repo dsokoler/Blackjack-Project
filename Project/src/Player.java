@@ -3,13 +3,22 @@ import java.util.ArrayList;
 public class Player {
 	//player's current chip count
 	int numChips;
+   
 	//indicates if player has busted on their hand or not
 	boolean hasBusted;
+   
 	ArrayList<Card> playerHand;
+   
 	//If player receives two of the same card, have option to split and create another hand
 	ArrayList<Card> splitHand;
    
    String lastAction = "";
+   String ID = "";
+   
+   public Player(){}
+   public Player(String id){
+      ID = id;
+   }
 		
 	public int getNumChips() { 
 		return numChips;
@@ -71,5 +80,13 @@ public class Player {
    
    public void setLastAction(String set){
       lastAction = set;
+   }
+   
+   public String getID(){
+      return ID;
+   }
+   
+   public void setID(String s){
+      ID = s;
    }
 }

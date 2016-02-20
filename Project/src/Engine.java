@@ -64,15 +64,19 @@ public class Engine {
 	//Begins a round of play with human and computers
 	public static void playGame() {
 
+      //Print board
+		printBoard();
+
 		while (handHasBeenWon() == false){
-			//Print board
-			printBoard();
 
 			//Print player's hand
 			printHand();
 
 			//Prompt player for an action
 			playerAction();
+         
+         // Print board after moves have been made
+         printBoard();
 
 		}
       
@@ -87,7 +91,7 @@ public class Engine {
       int payout = (int)(chipPot / winners.size());
       for(Player p : winners){
          p.setNumChips(p.getNumChips() + payout);
-         System.out.print("Player {IDENTIFIER} has won " + payout + " chips!");
+         System.out.print("Player " + p.getID() + " has won " + payout + " chips!");
       }
    }
 
@@ -128,7 +132,7 @@ public class Engine {
 			int size;
 			if (currentPlayer.playerHand.isEmpty()) size = 0;
 			else size = currentPlayer.playerHand.size();
-			System.out.println("Hand for CPU " + i + ": ");
+			System.out.println("Hand for CPU " + i + ": " + currentPlayer.handValue());
 			//Loop for each line to be printed
 			for (int line = 0; line < 10; line++){
 
@@ -213,7 +217,7 @@ public class Engine {
 	//Prints all the player's cards face up
 	public static void printHand() {
 		int size;
-		System.out.println("Your hand: ");
+		System.out.println("Your hand: " + human.handValue());
 		if (human.playerHand.isEmpty()) size = 0;
 		else size = human.playerHand.size();
 		//Loop for each line to be printed
@@ -296,7 +300,7 @@ public class Engine {
 			int cardOne = cpu.playerHand.get(0).value;
 			int cardTwo = cpu.playerHand.get(1).value;
 			System.out.println("CPU HAND VALUE: " + total);
-			System.out.println("CPU CARDS: " + cardOne + " " + cardTwo);
+			//System.out.println("CPU CARDS: " + cardOne + " " + cardTwo);
 
 			// Check if the player has busted
 			// if yes, skip the player
@@ -310,7 +314,7 @@ public class Engine {
 				//Use softTotals table
 			}
 			else if (handSizeOfTwo && cpu.playerHand.get(1).value == 1) {
-				System.out.println("Ace as Card 2: [" + cardOne + "][" + hoomanFaceUp + "]");
+				//System.out.println("Ace as Card 2: [" + cardOne + "][" + hoomanFaceUp + "]");
 				if (cardOne <= 8) {
 					int action = LookupTables.softTotals[cardOne - 2][hoomanFaceUp - 1];
 				}
@@ -353,10 +357,10 @@ public class Engine {
 				case 3:		//Double down (if not allowed, then stand)
 					System.out.println("DDS");
 					if (doubleDown) {
-               
+                  cpu.setLastAction("dds");
 					}
 					else {
-
+                  cpu.setLastAction("undefined");
 					}
 					break;
 				case 4:		//Split
@@ -442,9 +446,9 @@ public class Engine {
       // If no objects in winners here, nobody has 21. Check for all stay
       // tmp player object to record player with highest hand
       boolean allStay = true;
-		if(!human.getLastAction().equals("stay")) allStay = false;
-		for(int i = 0; i < computers.size(); i++){
-			if(!computers.get(i).getLastAction().equals("stay"))  allStay = false;
+		if(!human.getLastAction().equals("stay") && !human.getHasBusted()) allStay = false;
+		for(Player cpu : computers){
+			if(!cpu.getLastAction().equals("stay") && !cpu.getHasBusted())  allStay = false;
 		}
 		if(allStay){
 			// Check for highest hand
@@ -616,7 +620,7 @@ public class Engine {
 		human.setNumChips(chipSetting);
 
 		for (int i = 0; i < numCPU; i++) {
-			Player computer = new Player();
+			Player computer = new Player(Integer.toString(i));
 			computer.setNumChips(chipSetting);
 			computer.setHasBusted(false);
 			computer.playerHand = new ArrayList<Card>();
@@ -831,7 +835,7 @@ public class Engine {
 		chipSetting = DEFAULT_CHIP_SETTING;
 		difficulty = DEFAULT_CPU_DIFFICULTY_SETTING;
 		computers = new ArrayList<Player>();
-		human = new Player();
+		human = new Player("Human");
 		gameRunning = true;
 
 		//Print start menu
