@@ -14,12 +14,7 @@ public class Player {
 	ArrayList<Card> splitHand;
    
    String lastAction = "";
-   String ID = "";
-   
-   public Player(){playerHand = new ArrayList<Card>();}
-   public Player(String id){
-      ID = id;
-   }
+   //String ID = "";
 		
     public Player(int startingChipCount, String displayName){
     	this.numChips = startingChipCount;
@@ -122,11 +117,4 @@ public class Player {
       lastAction = set;
    }
    
-   public String getID(){
-      return ID;
-   }
-   
-   public void setID(String s){
-      ID = s;
-   }
 }

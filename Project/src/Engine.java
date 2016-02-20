@@ -71,7 +71,7 @@ public class Engine {
       //Print player's hand
 		printHand();
 
-		while (handHasBeenWon() == false){
+		while (handIsOver() == false){
 			printHand();
 
 			playerAction();			
@@ -81,7 +81,7 @@ public class Engine {
 			printBoard();
 		}
       
-		// Split winnings evenly amongst winners
+		determineWinners();
 		splitWinnings();
       
 		//hand has been won
@@ -409,7 +409,7 @@ public class Engine {
                cpu.setLastAction("stay");
 				}
 			}
-         System.out.println("CPU " + cpu.getID() + " chose to " + cpu.getLastAction());
+         System.out.println("CPU " + cpu.getDisplayName() + " chose to " + cpu.getLastAction());
 		}
 		System.out.println("Computers have made their move");
 		return;
@@ -428,72 +428,67 @@ public class Engine {
 		}
 	}
 
-	//TODO
-	public static boolean handHasBeenWon() {
-
-		// Check if all players have busted --> Dealer wins
+	public static void determineWinners(){
+		
+		// Check if all players have busted
 		boolean allBust = true;
-		if(!human.getHasBusted())   allBust = false;
+		if(human.getHasBusted() == false){   
+			allBust = false;
+		}
 		for(int i = 0; i <  computers.size(); i++){
-			if(!computers.get(i).getHasBusted())    allBust = false;
-		}
-		if(allBust){
-			// Dealer wins
-			//winners.add(dealerObjectHere);
-			return true;
-		}
-
-		// Check if any single player has 21 --> 
-		//    If so, check if tie with any other player
-		if(human.handValue() == 21){
-			winners.add(human);
-		}
-		for(int i = 0; i < computers.size(); i++){
-			if(computers.get(i).handValue() == 21){
-				winners.add(computers.get(i));
+			if(computers.get(i).getHasBusted() == false){
+				allBust = false;
 			}
 		}
-      if(winners.size() > 0){
-         return true;
+		if (dealer.getHasBusted() == false){
+			allBust = false;
+		}
+		
+		//Dealer wins if everyone busts
+		if(allBust){
+			winners.add(dealer);
+			return;
+		}
+      
+		//first, determine the highest hand value that is 21 or under
+      int highestNonBust = 0;
+      
+      if (human.getHasBusted() == false && human.handValue() > highestNonBust){
+    	  highestNonBust = human.handValue();
       }
       
-      // If no objects in winners here, nobody has 21. Check for all stay
-      // tmp player object to record player with highest hand
-      boolean allStay = true;
-		if(!human.getLastAction().equals("stay") && !human.getHasBusted()) allStay = false;
-		for(Player cpu : computers){
-			if(!cpu.getLastAction().equals("stay") && !cpu.getHasBusted())  allStay = false;
-		}
-		if(allStay){
-			// Check for highest hand
-         Player tmp = new Player();
-         tmp.insertCard(new Card(2));
-         if(human.handValue() > tmp.handValue()){
-            tmp = human;
-         }
-         for(Player cpu : computers){
-            if(cpu.handValue() > tmp.handValue()){
-               tmp = cpu;
-            }
-         }
-         
-         // Check for a tie with the highest hand
-         if(tmp != human && human.handValue() == tmp.handValue()){
-            winners.add(human);
-            // Should never happen since first checking if human has highest THEN checking CPU's...
-         }
-         for(Player cpu : computers){
-            if(tmp != cpu && cpu.handValue() == tmp.handValue()){
-               winners.add(cpu);
-            }
-         }
-         // All tied players should now be in winners arraylist
-         // split winnings here
-         
-         return true;
-		}
+      if (dealer.getHasBusted() == false && dealer.handValue() > highestNonBust){
+    	  highestNonBust = human.handValue();
+      }
+      
+      for (int i = 0; i < numCPU; i++){
+    	  Player computer = computers.get(i);
+    	  
+          if (computer.getHasBusted() == false && computer.handValue() > highestNonBust){
+        	  highestNonBust = computer.handValue();
+          }
+      }
+      
+      //Now find all hand(s) that have that value and add them to winners pool
+      if (human.handValue() == highestNonBust){
+    	  winners.add(human);
+      }
+      
+      if (dealer.handValue() == highestNonBust){
+    	  winners.add(dealer);
+      }
+      
+      for (int i = 0; i < numCPU; i++){
+    	  Player computer = computers.get(i);
+    	  
+          if (computer.handValue() == highestNonBust){
+        	  winners.add(computer);
+          }
+      }
       
 
+      //5 cards in hand rule : might add later
+      /*
 		// Check if any single player has 5 cards no bust --> Automatic win
 		if(human.getHand().size() >= 5 && human.handValue() <= 21){
 			winners.add(human);
@@ -505,9 +500,32 @@ public class Engine {
 				return true;
 			}
 		}
+		*/
 
-		// 
-		return false;	
+	}
+	
+	//TODO
+	public static boolean handIsOver() {
+
+		//start with assumption of true, systematically go through each player to prove true/false
+		boolean isHandOver = true;
+		
+		if (human.getHasBusted() == false && human.getIsStaying() == false){
+			isHandOver = false;
+		}
+		
+		if (dealer.getHasBusted() == false && dealer.getIsStaying() == false){
+			isHandOver = false;
+		}
+		
+		for (int i = 0; i < computers.size(); i++){
+			Player computer = computers.get(i);
+			if (computer.getHasBusted() == false && computer.getIsStaying() == false){
+				isHandOver = false;
+			}
+		}
+		
+		return isHandOver;	
 	}
 
 	//Prompts the player for an action, completes that action,
@@ -524,7 +542,7 @@ public class Engine {
 			System.out.println("2. Quit Game");
 		}else{
 			System.out.println("What would you like to do?");
-			System.out.println("Please Enter the number cooresponding with the action you want to take:");
+			System.out.println("Please Enter the number corresponding with the action you want to take:");
 			System.out.println("1. Hit");
 			System.out.println("2. Stay");
 			System.out.println("3. PLACEHOLDER");
