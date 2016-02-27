@@ -723,7 +723,7 @@ public class Engine {
 		for(Player cpu : computers)
 			cpu = null;
 		chipPot = 0;
-		winners = null;
+		winners = new ArrayList<Player>();
 	}
 
 	//Prints the rules
