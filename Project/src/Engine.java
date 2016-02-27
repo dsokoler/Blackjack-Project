@@ -65,10 +65,10 @@ public class Engine {
 	//Begins a round of play with human and computers
 	public static void playGame() {
 
-      //Print board
+		//Print board
 		printBoard();
-      
-      //Print player's hand
+
+		//Print player's hand
 		printHand();
 
 		while (handIsOver() == false){
@@ -78,29 +78,29 @@ public class Engine {
 			playerAction();			
 			computerAction();			
 			dealerAction();
-            
+
 			printBoard();
-         printHand();
+			printHand();
 		}
-      
+
 		determineWinners();
 		splitWinnings();
-      
+
 		//hand has been won
-      askForNewRound();
+		askForNewRound();
 	}
 
-   private static void splitWinnings(){
+	private static void splitWinnings(){
 
-      int payout = 0;
-      if(winners.size() > 0)
-         payout = (int)(chipPot / winners.size());
-      for(Player player : winners){
-         player.setNumChips(player.getNumChips() + payout);
-         System.out.print("Player " + player.getDisplayName() + " has won " + payout + " chips!");
+		int payout = 0;
+		if(winners.size() > 0)
+			payout = (int)(chipPot / winners.size());
+		for(Player player : winners){
+			player.setNumChips(player.getNumChips() + payout);
+			System.out.print("Player " + player.getDisplayName() + " has won " + payout + " chips!");
 
-      }
-   }
+		}
+	}
 
 	private static void askForNewRound() {
 		System.out.println("The hand is over, would you like to :\n"
@@ -111,9 +111,10 @@ public class Engine {
 		Scanner scanner = new Scanner(System.in);
 		String input = scanner.nextLine();
 
+		resetGame();
+		
 		if (input.equals("1")){
-			resetGame();
-         initializeGame();
+			initializeGame();
 			playGame();
 		}
 		else if (input.equals("2")){
@@ -312,32 +313,40 @@ public class Engine {
 
 			int cardOne = cpu.getHand().get(0).getValue();
 			int cardTwo = cpu.getHand().get(1).getValue();
+			int action = 0;
 			//System.out.println("CPU " + cpu.getID() + " HAND VALUE: " + total);
 
-			//System.out.println("CPU CARDS: " + cardOne + " " + cardTwo);
+			System.out.println("CPU CARDS: " + cardOne + " " + cardTwo);
+			System.out.println("HumanHandValue: " + humanHandValue);
 
 			// Check if the player has busted
 			// if yes, skip the player
 
 			if(cpu.getHasBusted()){
-            cpu.setLastAction("stay");
-            continue;
-         }
+				cpu.setLastAction("stay");
+				continue;
+			}
 
 
 			boolean handSizeOfTwo = (cpu.getHand().size() == 2);
-			if (handSizeOfTwo && cpu.getHand().get(0).value == 1) {
-				if (cardOne <= 8) {
-					int action = LookupTables.softTotals[cardTwo - 2][humanHandValue - 1];
+			if (handSizeOfTwo && cardOne == 1) {
+				if (cardTwo <= 9) {
+					action = LookupTables.softTotals[cardTwo - 2][humanHandValue - 1];
+				}
+				else {
+					action = LookupTables.hardTotals[total-5][humanHandValue];
 				}
 				//Use softTotals table
 			}
 
-			else if (handSizeOfTwo && cpu.getHand().get(1).value == 1) {
+			else if (handSizeOfTwo && cardTwo == 1) {
 				System.out.println("Ace as Card 2: [" + cardOne + "][" + humanHandValue + "]");
 
-				if (cardOne <= 8) {
-					int action = LookupTables.softTotals[cardOne - 2][humanHandValue - 1];
+				if (cardOne <= 9) {
+					action = LookupTables.softTotals[cardOne - 2][humanHandValue - 1];
+				}
+				else {
+					action = LookupTables.hardTotals[total-5][humanHandValue];
 				}
 			}
 			else if (handSizeOfTwo && (cpu.getHand().get(0).value == cpu.getHand().get(1).value)) {
@@ -345,78 +354,81 @@ public class Engine {
 				System.out.println("SPLITTING");
 			}
 			else {
-				/*
-				Use hardTotals table
-				0 is stay
-				1 is hit
-				2 is double down (if not allowed, then hit)
-				3 is double down (if not allowed, then stand)
-				4 is Split
-				5 is Surrender (if not allowed, then hit)
-				 */
-				int action = LookupTables.hardTotals[total-6][humanHandValue];
-				Card card;
-				switch(action) {
-				case 0:		//Stay
-					System.out.println("STAY");
-               cpu.setLastAction("stay");
-					break;
-				case 1:		//Hit
-					System.out.println("HIT");
+				action = LookupTables.hardTotals[total-5][humanHandValue];
+			}
+			/*
+			Use hardTotals table
+			0 is stay
+			1 is hit
+			2 is double down (if not allowed, then hit)
+			3 is double down (if not allowed, then stand)
+			4 is Split
+			5 is Surrender (if not allowed, then hit)
+			 */
+			Card card;
+			switch(action) {
+			case 0:		//Stay
+				System.out.println("STAY");
+				cpu.setLastAction("stay");
+				cpu.stay();
+				break;
+			case 1:		//Hit
+				System.out.println("HIT");
+				card = deck.get(drawIndex++);
+				cpu.hit(card);
+				cpu.setLastAction("hit");
+
+				break;
+			case 2:		//Double down (if not allowed, then hit)
+				System.out.println();
+				if (doubleDown) {
+					cpu.setLastAction("stay");
+					cpu.stay();
+				}
+				else {
 					card = deck.get(drawIndex++);
 					cpu.hit(card);
 					cpu.setLastAction("hit");
-
-					break;
-				case 2:		//Double down (if not allowed, then hit)
-					System.out.println();
-					if (doubleDown) {
-                  cpu.setLastAction("stay");
-					}
-					else {
-
-						card = deck.get(drawIndex++);
-						cpu.hit(card);
-						cpu.setLastAction("hit");
-
-					}
-					break;
-				case 3:		//Double down (if not allowed, then stand)
-					System.out.println("DDS");
-					if (doubleDown) {
-                  cpu.setLastAction("stay");
-					}
-					else {
-                  cpu.setLastAction("stay");
-					}
-					break;
-				case 4:		//Split
-					System.out.println("SPLIT");
-               cpu.setLastAction("stay");
-					break;
-				case 5:		//Surrender (if not allowed, then hit)
-					System.out.println("SURRENDER");
-					if (surrender) {
-                  cpu.setLastAction("stay");
-					}
-					else {
-
-						card = deck.get(drawIndex++);
-						cpu.hit(card);
-                  cpu.setLastAction("hit");
-
-					}
-					break;
-             default:
-               cpu.setLastAction("stay");
 				}
+				break;
+			case 3:		//Double down (if not allowed, then stand)
+				System.out.println("DDS");
+				if (doubleDown) {
+					cpu.setLastAction("stay");
+					cpu.stay();
+				}
+				else {
+					cpu.setLastAction("stay");
+					cpu.stay();
+				}
+				break;
+			case 4:		//Split
+				System.out.println("SPLIT");
+				cpu.setLastAction("stay");
+				cpu.stay();
+				break;
+			case 5:		//Surrender (if not allowed, then hit)
+				System.out.println("SURRENDER");
+				if (surrender) {
+					cpu.setLastAction("stay");
+					cpu.stay();
+				}
+				else {
+					card = deck.get(drawIndex++);
+					cpu.hit(card);
+					cpu.setLastAction("hit");
+				}
+				break;
+			default:
+				cpu.setLastAction("stay");
+				cpu.stay();
 			}
-         System.out.println("CPU " + cpu.getDisplayName() + " chose to " + cpu.getLastAction());
+			System.out.println("CPU " + cpu.getDisplayName() + " chose to " + cpu.getLastAction());
 		}
 		System.out.println("Computers have made their move");
 		return;
 	}
-	
+
 	public static void dealerAction(){
 		if(dealer.getIsStaying() == true || dealer.getHasBusted() == true){
 			return;
@@ -431,7 +443,7 @@ public class Engine {
 	}
 
 	public static void determineWinners(){
-		
+
 		// Check if all players have busted
 		boolean allBust = true;
 		if(human.getHasBusted() == false){   
@@ -445,52 +457,52 @@ public class Engine {
 		if (dealer.getHasBusted() == false){
 			allBust = false;
 		}
-		
+
 		//Dealer wins if everyone busts
 		if(allBust){
 			winners.add(dealer);
 			return;
 		}
-      
-		//first, determine the highest hand value that is 21 or under
-      int highestNonBust = 0;
-      
-      if (human.getHasBusted() == false && human.handValue() > highestNonBust){
-    	  highestNonBust = human.handValue();
-      }
-      
-      if (dealer.getHasBusted() == false && dealer.handValue() > highestNonBust){
-    	  highestNonBust = human.handValue();
-      }
-      
-      for (int i = 0; i < numCPU; i++){
-    	  Player computer = computers.get(i);
-    	  
-          if (computer.getHasBusted() == false && computer.handValue() > highestNonBust){
-        	  highestNonBust = computer.handValue();
-          }
-      }
-      
-      //Now find all hand(s) that have that value and add them to winners pool
-      if (human.handValue() == highestNonBust){
-    	  winners.add(human);
-      }
-      
-      if (dealer.handValue() == highestNonBust){
-    	  winners.add(dealer);
-      }
-      
-      for (int i = 0; i < numCPU; i++){
-    	  Player computer = computers.get(i);
-    	  
-          if (computer.handValue() == highestNonBust){
-        	  winners.add(computer);
-          }
-      }
-      
 
-      //5 cards in hand rule : might add later
-      /*
+		//first, determine the highest hand value that is 21 or under
+		int highestNonBust = 0;
+
+		if (human.getHasBusted() == false && human.handValue() > highestNonBust){
+			highestNonBust = human.handValue();
+		}
+
+		if (dealer.getHasBusted() == false && dealer.handValue() > highestNonBust){
+			highestNonBust = human.handValue();
+		}
+
+		for (int i = 0; i < numCPU; i++){
+			Player computer = computers.get(i);
+
+			if (computer.getHasBusted() == false && computer.handValue() > highestNonBust){
+				highestNonBust = computer.handValue();
+			}
+		}
+
+		//Now find all hand(s) that have that value and add them to winners pool
+		if (human.handValue() == highestNonBust){
+			winners.add(human);
+		}
+
+		if (dealer.handValue() == highestNonBust){
+			winners.add(dealer);
+		}
+
+		for (int i = 0; i < numCPU; i++){
+			Player computer = computers.get(i);
+
+			if (computer.handValue() == highestNonBust){
+				winners.add(computer);
+			}
+		}
+
+
+		//5 cards in hand rule : might add later
+		/*
 		// Check if any single player has 5 cards no bust --> Automatic win
 		if(human.getHand().size() >= 5 && human.handValue() <= 21){
 			winners.add(human);
@@ -502,31 +514,31 @@ public class Engine {
 				return true;
 			}
 		}
-		*/
+		 */
 
 	}
-	
+
 	//TODO
 	public static boolean handIsOver() {
 
 		//start with assumption of true, systematically go through each player to prove true/false
 		boolean isHandOver = true;
-		
+
 		if (human.getHasBusted() == false && human.getIsStaying() == false){
 			isHandOver = false;
 		}
-		
+
 		if (dealer.getHasBusted() == false && dealer.getIsStaying() == false){
 			isHandOver = false;
 		}
-		
+
 		for (int i = 0; i < computers.size(); i++){
 			Player computer = computers.get(i);
 			if (computer.getHasBusted() == false && computer.getIsStaying() == false){
 				isHandOver = false;
 			}
 		}
-		
+
 		return isHandOver;	
 	}
 
@@ -552,26 +564,26 @@ public class Engine {
 			System.out.println("4. Quit Game");
 		}*/
 		while(!check) {
-         check = true;
-      
-         System.out.println("What would you like to do?");
+			check = true;
+
+			System.out.println("What would you like to do?");
 			System.out.println("Please Enter the number cooresponding with the action you want to take:");
 			System.out.println("1. Hit");
 			System.out.println("2. Stay");
 			System.out.println("3. PLACEHOLDER");
 			System.out.println("4. Quit Game");
-      
+
 			try {
 				input = in.nextInt();
 			} catch (Exception e) {
 				System.out.println("Please enter a valid option.");
 			}
-		
+
 			switch(input) {
 			case 1:
 				if(bust){
 					System.out.println("You cannot hit after you have already busted.");
-               check = false;
+					check = false;
 				}else{
 					System.out.println("You are dealt another card.");
 					Card card = deck.get(drawIndex++);
@@ -580,8 +592,8 @@ public class Engine {
 				break;
 
 			case 2:
-					System.out.println("You passed this round.");
-
+				System.out.println("You passed this round.");
+				human.stay();
 				break;
 
 			case 3:
@@ -591,9 +603,9 @@ public class Engine {
 			case 4:
 				quit();
 				break;
-         
-         default:
-            check = false;
+
+			default:
+				check = false;
 			}
 		}
 
@@ -607,6 +619,7 @@ public class Engine {
 			computers.get(i).insertCard(deck.get(drawIndex++));
 		}
 		//draw two cards
+		//TODO: NULL POINTER EXCEPTION HERE WHEN STARTING A NEW GAME (HUMAN IS NULL)
 		human.insertCard(deck.get(drawIndex++));
 		human.insertCard(deck.get(drawIndex++));
 		return;
@@ -678,7 +691,7 @@ public class Engine {
 				}else{
 					valid = true;
 					human.setNumChips(human.getNumChips() - bet);
-               chipPot += bet;
+					chipPot += bet;
 				}
 			}catch(Exception e){
 				System.out.println("Error: Please enter a valid integer.");
@@ -703,14 +716,14 @@ public class Engine {
 		System.out.println("");
 		return;
 	}
-   
-   public static void resetGame() {
-      human = null;
-      for(Player cpu : computers)
-         cpu = null;
-      chipPot = 0;
-      winners = null;
-   }
+
+	public static void resetGame() {
+		human.clearHand();
+		for(Player cpu : computers)
+			cpu = null;
+		chipPot = 0;
+		winners = null;
+	}
 
 	//Prints the rules
 	//TODO PRINT GAME RULES
@@ -873,11 +886,11 @@ public class Engine {
 		startingChipCount = DEFAULT_CHIP_SETTING;
 		difficulty = DEFAULT_CPU_DIFFICULTY_SETTING;
 		computers = new ArrayList<Player>();
-	   winners = new ArrayList<Player>();
-		
+		winners = new ArrayList<Player>();
+
 		//allows update w/ account serialization
 		playerDisplayName = "Human";
-		
+
 		human = new Player(startingChipCount, playerDisplayName);
 		dealer = new Player(startingChipCount, "Dealer");
 

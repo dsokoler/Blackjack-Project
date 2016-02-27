@@ -24,6 +24,10 @@ public class Player {
     	playerHand = new ArrayList<Card>();
     }
     
+    public void clearHand() {
+    	playerHand = new ArrayList<Card>();
+    }
+    
     public String getDisplayName(){
     	return displayName;
     }
