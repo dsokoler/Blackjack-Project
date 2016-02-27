@@ -666,6 +666,7 @@ public class Engine {
 
 	//Set up each CPU
 	public static void initializeCPU() {
+		computers = new ArrayList<Player>();
 		for (int i = 0; i < numCPU; i++) {
 			Player computer = new Player(startingChipCount, "CPU " + i);
 			computers.add(computer);
@@ -885,7 +886,7 @@ public class Engine {
 		numCPU = DEFAULT_CPU_COUNT_SETTING;
 		startingChipCount = DEFAULT_CHIP_SETTING;
 		difficulty = DEFAULT_CPU_DIFFICULTY_SETTING;
-		computers = new ArrayList<Player>();
+		//computers = new ArrayList<Player>();
 		winners = new ArrayList<Player>();
 
 		//allows update w/ account serialization
