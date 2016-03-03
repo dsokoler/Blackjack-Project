@@ -72,9 +72,6 @@ public class Engine {
 		printHand();
 
 		while (handIsOver() == false){
-			printHand();
-
-
 			playerAction();			
 			computerAction();			
 			dealerAction();
@@ -100,6 +97,7 @@ public class Engine {
 			System.out.print("Player " + player.getDisplayName() + " has won " + payout + " chips!");
 
 		}
+		return;
 	}
 
 	private static void askForNewRound() {
@@ -108,9 +106,9 @@ public class Engine {
 				+ "2. Return to main menu\n"
 				+ "3. Quit"
 				);
-		Scanner scanner = new Scanner(System.in);
-		String input = scanner.nextLine();
 
+		String input = in.nextLine();
+		
 		resetGame();
 		
 		if (input.equals("1")){
@@ -127,10 +125,8 @@ public class Engine {
 			System.out.println("Invalid Input");
 			askForNewRound();
 		}
+		return;
 	}	
-
-
-
 
 	//Will print all the CPU's hands as should be viewed by the player
 	//Meaning the first two cards are blank backs and all other cards are face up
@@ -305,7 +301,6 @@ public class Engine {
 	}
 
 	//Plays the actions for all the computers in comps
-	//TODO: Dan's territory
 	public static void computerAction() {
 		int humanHandValue = human.getHand().get(1).value - 1;
 		for (Player cpu : computers) {
@@ -518,7 +513,6 @@ public class Engine {
 
 	}
 
-	//TODO
 	public static boolean handIsOver() {
 
 		//start with assumption of true, systematically go through each player to prove true/false
@@ -545,10 +539,10 @@ public class Engine {
 	//Prompts the player for an action, completes that action,
 	//CPUs complete their turn, and everything is set up for the next round
 	public static void playerAction() {
-		boolean raise = false;
 		boolean check = false;
 		boolean bust = human.getHasBusted();
 		int input = 0;
+		String inputString;
 
 		/*if(bust){
 			System.out.println("Sorry, you have busted.");
@@ -574,7 +568,8 @@ public class Engine {
 			System.out.println("4. Quit Game");
 
 			try {
-				input = in.nextInt();
+				inputString = in.nextLine();
+				input = Integer.parseInt(inputString);
 			} catch (Exception e) {
 				System.out.println("Please enter a valid option.");
 			}
@@ -598,6 +593,7 @@ public class Engine {
 
 			case 3:
 				System.out.println("PLACEHOLDER DOES NOTHING, IT'S SUPER EFFECTIVE");
+				check = false;
 				break;
 
 			case 4:
@@ -703,7 +699,6 @@ public class Engine {
 
 	//Setup the deck for the first time and shuffle the cards for a new game
 	public static void initializeGame() {
-
 		System.out.println("Setting up CPUs...");
 		initializeCPU();
 		System.out.println("Setting up deck...");

@@ -26,6 +26,7 @@ public class Player {
     
     public void clearHand() {
     	playerHand = new ArrayList<Card>();
+    	hasBusted = false;
     }
     
     public String getDisplayName(){
