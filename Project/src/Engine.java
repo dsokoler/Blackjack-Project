@@ -80,6 +80,7 @@ public class Engine {
 			printHand();
 		}
 
+		printBoard();
 		determineWinners();
 		splitWinnings();
 
@@ -88,13 +89,13 @@ public class Engine {
 	}
 
 	private static void splitWinnings(){
-
+		
 		int payout = 0;
 		if(winners.size() > 0)
 			payout = (int)(chipPot / winners.size());
 		for(Player player : winners){
 			player.setNumChips(player.getNumChips() + payout);
-			System.out.print("Player " + player.getDisplayName() + " has won " + payout + " chips!");
+			System.out.println("Player " + player.getDisplayName() + " has won " + payout + " chips!");
 
 		}
 		return;
@@ -131,6 +132,10 @@ public class Engine {
 	//Will print all the CPU's hands as should be viewed by the player
 	//Meaning the first two cards are blank backs and all other cards are face up
 	public static void printBoard() {
+		if (handIsOver()){
+		System.out.println("-----------------------ROUND OVER----------------------");
+		}
+		System.out.println("-------------------------Board-------------------------");
 		//Loop for each CPU
 		for (int i = 0; i < computers.size(); i++) {
 			Player currentPlayer = computers.get(i);
@@ -138,7 +143,12 @@ public class Engine {
 
 			if (currentPlayer.getHand().isEmpty()) size = 0;
 			else size = currentPlayer.getHand().size();
-			System.out.println("Hand for CPU " + i + ": ");
+			System.out.print("Hand for CPU " + i);
+			
+			if(currentPlayer.getHasBusted() == true){
+				System.out.print(" (BUSTED) ");
+			}
+			System.out.println(": ");
 
 			//Loop for each line to be printed
 			for (int line = 0; line < 10; line++){
@@ -162,7 +172,7 @@ public class Engine {
 						//Third line
 					case 2:
 						//If one of the first two cards, don't print the value
-						if (cardIndex < 1) System.out.print("|{{{{{{{{{| ");
+						if (cardIndex < 1 && (handIsOver() == false)) System.out.print("|{{{{{{{{{| ");
 						else {
 							if (!(currentCardValue.equals("10"))) System.out.print("|" + currentCardValue + "        | ");
 							else System.out.print("|" + currentCardValue + "       | ");
@@ -172,7 +182,7 @@ public class Engine {
 						//Second to last line
 					case 8:
 						//If one of the first two cards, don't print the value
-						if (cardIndex < 1) System.out.print("|{{{{{{{{{| ");
+						if (cardIndex < 1 && (handIsOver() == false)) System.out.print("|{{{{{{{{{| ");
 						else {
 							if (!(currentCardValue.equals("10"))) System.out.print("|        " + currentCardValue + "| ");
 							else System.out.print("|       " + currentCardValue + "| ");
@@ -187,7 +197,7 @@ public class Engine {
 						//All lines in between
 					default:
 						//If one of the first two cards, don't print the suit
-						if (cardIndex < 1) System.out.print(empty[line-3]);
+						if (cardIndex < 1 && (handIsOver() == false)) System.out.print(empty[line-3]);
 						else {
 							switch(currentCard.suit) {
 							case 1:
@@ -217,15 +227,22 @@ public class Engine {
 				System.out.println("");
 			}// END for(computers)
 			//Aesthetic
-			System.out.println("");
+			System.out.println("");			
 		}
+		System.out.println("-------------------------------------------------------");
 	}
 
 	//Prints all the player's cards face up
 	public static void printHand() {
 		int size;
 
-		System.out.println("Your hand: " + human.handValue());
+		System.out.print("Your hand " );
+		if(human.getHasBusted() == true){
+			System.out.print("(BUSTED)");
+		}
+		System.out.print(" : ");
+		System.out.println(human.handValue());
+		
 		if (human.getHand().isEmpty()) size = 0;
 		else size = human.getHand().size();
 
@@ -462,18 +479,18 @@ public class Engine {
 		//first, determine the highest hand value that is 21 or under
 		int highestNonBust = 0;
 
-		if (human.getHasBusted() == false && human.handValue() > highestNonBust){
+		if ((human.getHasBusted() == false) && (human.handValue() > highestNonBust)){
 			highestNonBust = human.handValue();
 		}
 
-		if (dealer.getHasBusted() == false && dealer.handValue() > highestNonBust){
-			highestNonBust = human.handValue();
+		if ((dealer.getHasBusted() == false) && (dealer.handValue() > highestNonBust)){
+			highestNonBust = dealer.handValue();
 		}
 
 		for (int i = 0; i < numCPU; i++){
 			Player computer = computers.get(i);
 
-			if (computer.getHasBusted() == false && computer.handValue() > highestNonBust){
+			if ((computer.getHasBusted() == false) && (computer.handValue() > highestNonBust)){
 				highestNonBust = computer.handValue();
 			}
 		}
