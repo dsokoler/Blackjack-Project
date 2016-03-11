@@ -80,7 +80,7 @@ public class Engine {
 			printHand();
 		}
 
-		printBoard();
+		//printBoard();
 		determineWinners();
 		splitWinnings();
 
@@ -618,6 +618,7 @@ public class Engine {
 				break;
 
 			default:
+				System.out.println("That was not a valid input. Enter a number within the range [1-4]");
 				check = false;
 			}
 		}
@@ -690,6 +691,11 @@ public class Engine {
 	public static void initializeBets() {
 		// Do for all players
 		System.out.println("Current chip amount: " + human.getNumChips());
+		if (human.getNumChips() == 0) {
+			System.out.println("You are out of chips! Dispensing default chip amount to player");
+			human.setNumChips(DEFAULT_CHIP_SETTING);
+			System.out.println("Current chip amount: " + human.getNumChips());
+		}
 		System.out.println("Please enter the number of chips you would like to bet this round.");
 		int bet = 0;
 		boolean valid = false;
@@ -846,9 +852,8 @@ public class Engine {
 			//Get input
 			try {
 				String input = in.nextLine();
-				input = input.replace("\n", "");
+				//input = input.replace("\n", "");
 				choice = Integer.parseInt(input);
-				//choice = in.nextInt();
 				check = true;
 			} catch (Exception e) {
 				System.out.println("Invalid Input: Input must be a number");
