@@ -65,11 +65,7 @@ public class Engine {
 	//Begins a round of play with human and computers
 	public static void playGame() {
 
-		//Print board
 		printBoard();
-
-		//Print player's hand
-		printHand();
 
 		while (handIsOver() == false){
 			playerAction();			
@@ -77,7 +73,6 @@ public class Engine {
 			dealerAction();
 
 			printBoard();
-			printHand();
 		}
 
 		//printBoard();
@@ -136,6 +131,19 @@ public class Engine {
 		System.out.println("-----------------------ROUND OVER----------------------");
 		}
 		System.out.println("-------------------------Board-------------------------");
+		
+		printCPUHands();
+		printPlayerHand();
+		printDealerHand();
+		
+		System.out.println("-------------------------------------------------------");
+	}
+	
+	public static void printDealerHand(){
+		
+	}
+	
+	public static void printCPUHands(){
 		//Loop for each CPU
 		for (int i = 0; i < computers.size(); i++) {
 			Player currentPlayer = computers.get(i);
@@ -229,11 +237,10 @@ public class Engine {
 			//Aesthetic
 			System.out.println("");			
 		}
-		System.out.println("-------------------------------------------------------");
 	}
-
+	
 	//Prints all the player's cards face up
-	public static void printHand() {
+	public static void printPlayerHand() {
 		int size;
 
 		System.out.print("Your hand " );
