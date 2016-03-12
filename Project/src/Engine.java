@@ -143,12 +143,13 @@ public class Engine {
 
 			if (currentPlayer.getHand().isEmpty()) size = 0;
 			else size = currentPlayer.getHand().size();
-			System.out.print("Hand for CPU " + i);
+			System.out.print("Hand for CPU " + i + ": " + currentPlayer.handValue());
 			
 			if(currentPlayer.getHasBusted() == true){
 				System.out.print(" (BUSTED) ");
 			}
-			System.out.println(": ");
+         System.out.println();
+			//System.out.println(": ");
 
 			//Loop for each line to be printed
 			for (int line = 0; line < 10; line++){
@@ -328,8 +329,8 @@ public class Engine {
 			int action = 0;
 			//System.out.println("CPU " + cpu.getID() + " HAND VALUE: " + total);
 
-			System.out.println("CPU CARDS: " + cardOne + " " + cardTwo);
-			System.out.println("HumanHandValue: " + humanHandValue);
+			//System.out.println("CPU CARDS: " + cardOne + " " + cardTwo);
+			//System.out.println("HumanHandValue: " + humanHandValue);
 
 			// Check if the player has busted
 			// if yes, skip the player
@@ -352,7 +353,7 @@ public class Engine {
 			}
 
 			else if (handSizeOfTwo && cardTwo == 1) {
-				System.out.println("Ace as Card 2: [" + cardOne + "][" + humanHandValue + "]");
+				//System.out.println("Ace as Card 2: [" + cardOne + "][" + humanHandValue + "]");
 
 				if (cardOne <= 9) {
 					action = LookupTables.softTotals[cardOne - 2][humanHandValue - 1];
@@ -380,12 +381,12 @@ public class Engine {
 			Card card;
 			switch(action) {
 			case 0:		//Stay
-				System.out.println("STAY");
+				//System.out.println("STAY");
 				cpu.setLastAction("stay");
 				cpu.stay();
 				break;
 			case 1:		//Hit
-				System.out.println("HIT");
+				//System.out.println("HIT");
 				card = deck.get(drawIndex++);
 				cpu.hit(card);
 				cpu.setLastAction("hit");
@@ -404,7 +405,7 @@ public class Engine {
 				}
 				break;
 			case 3:		//Double down (if not allowed, then stand)
-				System.out.println("DDS");
+				//System.out.println("DDS");
 				if (doubleDown) {
 					cpu.setLastAction("stay");
 					cpu.stay();
@@ -415,12 +416,12 @@ public class Engine {
 				}
 				break;
 			case 4:		//Split
-				System.out.println("SPLIT");
+				//System.out.println("SPLIT");
 				cpu.setLastAction("stay");
 				cpu.stay();
 				break;
 			case 5:		//Surrender (if not allowed, then hit)
-				System.out.println("SURRENDER");
+				//System.out.println("SURRENDER");
 				if (surrender) {
 					cpu.setLastAction("stay");
 					cpu.stay();
@@ -435,9 +436,9 @@ public class Engine {
 				cpu.setLastAction("stay");
 				cpu.stay();
 			}
-			System.out.println("CPU " + cpu.getDisplayName() + " chose to " + cpu.getLastAction());
+			//System.out.println("CPU " + cpu.getDisplayName() + " chose to " + cpu.getLastAction());
 		}
-		System.out.println("Computers have made their move");
+		//System.out.println("Computers have made their move");
 		return;
 	}
 
