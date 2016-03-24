@@ -562,13 +562,16 @@ public class Engine {
 	}
 
 	//Prompts the player for an action, completes that action,
-	//CPUs complete their turn, and everything is set up for the next round
 	public static void playerAction() {
 		boolean check = false;
 		boolean bust = human.getHasBusted();
 		int input = 0;
 		String inputString;
 
+		if (human.getHasBusted() == true || human.getIsStaying() == true){
+			return;
+		}
+		
 		/*if(bust){
 			System.out.println("Sorry, you have busted.");
 			System.out.println("Please Enter the number corresponding with the action you want to take:");
