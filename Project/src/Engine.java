@@ -592,8 +592,8 @@ public class Engine {
 			System.out.println("Please Enter the number cooresponding with the action you want to take:");
 			System.out.println("1. Hit");
 			System.out.println("2. Stay");
-			System.out.println("3. PLACEHOLDER");
-			System.out.println("4. Quit Game");
+			//System.out.println("3. PLACEHOLDER");
+			System.out.println("3. Quit Game");
 
 			try {
 				inputString = in.nextLine();
@@ -619,17 +619,17 @@ public class Engine {
 				human.stay();
 				break;
 
-			case 3:
+			/*case 3:
 				System.out.println("PLACEHOLDER DOES NOTHING, IT'S SUPER EFFECTIVE");
 				check = false;
-				break;
+				break;*/
 
-			case 4:
+			case 3:
 				quit();
 				break;
 
 			default:
-				System.out.println("That was not a valid input. Enter a number within the range [1-4]");
+				System.out.println("That was not a valid input. Enter a number within the range [1-3]");
 				check = false;
 			}
 		}
